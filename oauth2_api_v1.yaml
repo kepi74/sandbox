@@ -1,0 +1,346 @@
+swagger: '2.0'
+basePath: /
+definitions:
+  out-get-oauth2-userinfo:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      organization:
+        type: string
+      roles:
+        type: string
+      sub:
+        type: string
+      surname:
+        type: string
+    type: object
+  out-post-oauth-token:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: number
+      id_token:
+        type: string
+      refresh_token:
+        type: string
+      scope:
+        type: string
+      token_type:
+        type: string
+    type: object
+  out-post-oauth2-token-400:
+    properties:
+      error:
+        type: string
+      error_description:
+        type: string
+    type: object
+host: localhost
+info:
+  title: Oauth2Authorization
+  version: v1
+paths:
+  /oauth2/authorize:
+    get:
+      description: |
+        [CZ] Získání stránky s přihlášením a asociace k Oauth2. Po přihlášení
+        vrazí na {callback_url}?code={auth_code}.
+
+
+        [EN] Asociation with Oauth2 and get the login page. After login returns
+        to {callback_url}?code={auth_code}.
+      parameters:
+        - name: response_type
+          description: |
+            [CZ] Způsob návratu po autentizaci, musí být nastaveno na code.
+
+            [EN] Must be se to code.
+          in: query
+          required: true
+          type: string
+        - name: client_id
+          in: query
+          description: |
+            [CZ] Vygenerované id aplikace (uživatelské jméno aplikace).
+
+            [EN] Generated application id (application user name).
+          required: true
+          type: string
+        - name: redirect_uri
+          in: query
+          description: |
+            [CZ] Návratová adresa po autentizaci.
+
+            [EN] Callback URL after login.
+          required: true
+          type: string
+        - name: scope
+          in: query
+          description: |
+            [CZ] Scope pro informace o uživateli, podporovaná je openid.
+
+            [EN] Authentication scope, openid only suported.
+          required: false
+          type: string
+        - name: state
+          in: query
+          description: |
+            [CZ] Bezpečnostní hash, který oauth vrátí při úspěšném loginu v
+            parametru 'state'.
+
+            [EN] Security hash, it will be returned to callback url in 'state'
+            param.
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Description
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+  /oauth2/revoke:
+    post:
+      consumes:
+        - application/x-www-form-urlencoded
+      description: |
+        [CZ] Zrušení platnosti tokenu.
+
+        [EN] Token revocation.
+      produces:
+        - text/html
+      parameters:
+        - name: token
+          in: formData
+          description: |
+            [CZ] Přístupový token.
+
+            [EN] Access token.
+          required: false
+          type: string
+        - name: token_type_hint
+          in: formData
+          description: |
+            [CZ] Typ předaného tokenu.
+
+            [EN] Token type.
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/out-post-oauth2-token-400'
+          examples: 
+            application/json: 
+              - error: invalid_client
+                error_description: Client Authentication failed.
+      security:
+        - Basic: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+  /oauth2/token:
+    post:
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      description: |
+        [CZ] Manipulace s tokenem - vyžádání, obnova.
+
+        [EN] Token request, renewal.
+      parameters:
+        - name: grant_type
+          in: formData
+          description: |
+            [CZ] Typ operace - podporované jsou
+                - authorization_code - získání tokenu pomocí OTP získaného přes authorize endpoint.
+                - password - získání tokenu přes jméno a heslo
+                - refresh_token - obnova tokenu pomocí refresh token
+
+            [EN] Grant type - supported
+                - authorization_code - get the token though OTP from authorize endpoint
+                - password - get the token by providing username and password
+                - refresh_token - token renewal though refresh token
+          required: true
+          type: string
+        - name: code
+          in: formData
+          description: >
+            [CZ] Jednorázové heslo obdržené při návratu na callback_url, povinný
+            pouze při authorization_code operaci.
+
+
+            [EN] One type password received by returning to callback_url,
+            required with authorization_code grant.
+          required: false
+          type: string
+        - name: redirect_uri
+          in: formData
+          description: >
+            [CZ] Callback url definovaná pro aplikaci, povinná při
+            authorization_code operaci.
+
+
+            [EN] Callback url defined for application, required with
+            authorization_code grant.
+          required: false
+          type: string
+        - name: client_id
+          in: formData
+          description: >
+            [CZ] Vygenerované ID aplikace, požadované pro každou operaci pokud
+            není použita Basic authorization.
+
+
+            [EN] Generated appliaction ID, required for every grant if Basic
+            authorization not preset.
+          required: true
+          type: string
+        - name: client_secret
+          in: formData
+          description: |
+            [CZ] Heslo pro aplikaci, nepožadováno při operaci password.
+
+            [EN] Application password, not required with password grant.
+          required: false
+          type: string
+        - name: username
+          in: formData
+          description: |
+            [CZ] Uživatelské jméno povinné při operaci password.
+
+            [EN] Username required with password grant.
+          required: false
+          type: string
+        - name: password
+          in: formData
+          description: |
+            [CZ] Uživatelské heslo povinné při operaci password.
+
+            [EN] User password required with password grant.
+          required: false
+          type: string
+        - name: scope
+          in: formData
+          description: |
+            [CZ] Rozsah autorizace povinný pro operaci password.
+
+            [EN] Authorization scope required with password grant.
+          required: false
+          type: string
+        - name: refresh_token
+          in: formData
+          description: >
+            [CZ] Refresh token povinný při operaci refresh_token obdržený s
+            access tokenem.
+
+
+            [EN] Refresh token required with refresh_token grant received
+            earlier with access token.
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/out-post-oauth-token'
+          examples:
+            application/json:
+              - scope: openid
+                token_type: Bearer
+                expires_in: 3600
+                refresh_token: 6583215d3a2aedf6268e923d15fcb03e
+                id_token: >-
+                  eyJhbGciOiJSUzI1NiJ9.eyJhdXRoX3RpbWUiOjE0NjQ3OTA1MjksImV4cCI6MTQ2NDc5NDEyOSwiYXpwIjoicWNPT2tQcXJJM1hWelpveVBoVlBCWVZPSExjYSIsImF0X2hhc2giOiJGSmk0UHB0X2ZYRHVjUWp5VXZmWHZBIiwiYXVkIjpbInFjT09rUHFySTNYVnpab3lQaFZQQllWT0hMY2EiXSwiaXNzIjoiaHR0cHM6XC9cL2xvY2FsaG9zdDo5NDQzXC9vYXV0aDJcL3Rva2VuIiwiaWF0IjoxNDY0NzkwNTI5fQ.EZukbnCEvT1Yu8d3hXuRDAD4NUxRBh84E8JGwrpyj6j_s0C8V1jifRj37_UtlkzQEYlM0UfXUrpD_cK_FYwYb-rR1c1oeTIDGKyhxeqJ1NlGpH-_E2038NSpj0LlQhzKLMBSvwwuZcoyxFINrWeqGlcC0j2NHBNVMA65G0ID2hs
+                access_token: 46d0311c987c5af757d3f264c1fd2545
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/out-post-oauth2-token-400'
+          examples:
+            application/json:
+              - error: invalid_grant
+                error_description: Provided Authorization Grant is invalid
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/out-post-oauth2-token-400'
+          examples: 
+            application/json: 
+              - error: invalid_client
+                error_description: Client Authentication failed.
+      security:
+        - Basic: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+  /oauth2/userinfo:
+    get:
+      produces:
+        - application/json
+      description: |
+        [CZ] Informace o přihlášeném uživateli.
+
+        [EN] Logged in user info.
+      parameters:
+        - name: schema
+          in: query
+          description: |
+            [CZ] Schéma uživatelských atributů.
+
+            [EN] User attribute schema.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/out-get-oauth2-userinfo'
+          examples: 
+            application/json: 
+              - sub: B15209@eon-distribuce.carbon
+                organization: EBSCZ
+                email: bretislav.kabele@eon.com
+                roles: Application/partnersky-portal,Application/B15209_DefaultApplication_PRODUCTION,Application/nEMS,Application/partnersky-portal/ECP,Application/nEMS2,Application/nEMS/GEOF,Application/nEMS3,Application/test,Application/nEMS4,Application/partnersky-portal/BOZP,Application/test-csharp,Application/aaaaa,admin,Application/partnersky-portal/all,Internal/everyone,Application/registrace
+                surname: Kábele
+                firstname: Břetislav
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/out-post-oauth2-token-400'
+          examples: 
+            application/json: 
+              - error: invalid_client
+                error_description: Client Authentication failed.
+      security:
+        - Bearer:
+            - authorize
+      x-auth-type: Application & Application User
+      x-throttling-tier: Unlimited
+schemes:
+  - https
+securityDefinitions:
+  Basic:
+    description: |
+      [CZ] Autorizace pomocí app_id (uživatelské jméno) a app_secret (heslo),
+      nemusí být přítomna, pokud se parametry vloží do body.
+
+
+      [EN] Authorization with app_id (username) and app_secret (password), it do
+      not have to passed if parameters are present in body.
+    type: basic
+  Bearer:
+    type: oauth2
+    authorizationUrl: 'https://localhost/oauth2/authorize'
+    description: |
+      [CZ] Oauth2 autentizace pomocí přístupového tokenu.
+
+      [EN] Oauth2 autentization with access token.
+    scopes:
+      authorize: authorize users
+    tokenUrl: 'https://localhost/oauth2/token'
+    flow: accessCode
+

@@ -1,0 +1,1869 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "v1"
+  title: API for household
+
+basePath: /api/ece/selfcare/mo
+schemes:
+  - https
+
+securityDefinitions:
+  Oauth2Password:
+    type: oauth2
+    description: |
+      [CZ] Oauth2 autentizace pomocí přístupového tokenu.
+
+      [EN] Oauth2 autentization with access token.
+    scopes:
+      openid: all authorizarion
+    tokenUrl: 'https://login-test.eon.cz/oauth2/token'
+    flow: password
+  Oauth2Code:
+    type: oauth2
+    description: |
+      [CZ] Oauth2 autentizace pomocí přístupového tokenu.
+
+      [EN] Oauth2 autentization with access token.
+    scopes:
+      openid: all authorizarion
+    tokenUrl: 'https://login-test.eon.cz/oauth2/token'
+    authorizationUrl: 'https://login-test.eon.cz/oauth2/authorize'
+    flow: accessCode
+
+security:
+  - Oauth2Password:
+    - openid
+  - Oauth2Code:
+    - openid
+
+definitions:
+  Address:
+    type: object
+    properties:
+      zip_code:
+        type: string
+        maxLength: 6
+      city:
+        type: string
+      city_part:
+        type: string
+      street:
+        type: string
+      house_number:
+        type: string
+      orientation_number:
+        type: string
+  Link:
+    type: object
+    required:
+      - rel
+      - href
+    properties:
+      rel:
+        type: string
+        enum:
+          - invoices
+          - pre-payments
+          - payments
+          - partner
+          - contract
+          - consumption
+          - bank
+          - next
+          - hdo-times
+          - online-payment
+          - edit-address
+          - edit-mobile
+          - edit-email
+          - edit-pre-payment
+          - add-meter-read
+          - add-ebill
+          - change-password
+          - auto_complete
+          - installations
+          - services
+      href:
+        type: string
+  Installation:
+    type: object
+    required:
+      - id
+      - segment
+      - consumption_place
+      - type
+      - pod
+      - address
+    properties:
+      id:
+        description: Instalation number.
+        type: integer
+      segment:
+        type: string
+        enum:
+          - ELECTRICITY: E in ODS
+          - GAS: P in ODS
+      consumption_place:
+        description: Cunsumption place number.
+        type: integer
+      type:
+        type: string
+        enum:
+          - CONSUMPTION: SPO in ODS
+          - PRODUCTION: VYR in ODS
+      pod:
+        type: string
+        description: EAN/EIC code
+      address:
+        $ref: '#/definitions/Address'
+      links:
+        description: |
+          Links to payments (invoice, pre-payments), contract, partner and consumption.
+          'rel' values:
+            - invoices
+            - pre-payments
+            - partner
+            - contract
+            - consumption
+            - add-meter-read
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+  Service:
+    type: object
+    required:
+      - code
+      - name
+      - type
+      - state
+    properties:
+      code:
+        description: Code of service.
+        type: string
+      name:
+        description: Human readable name of service.
+        type: string
+      type:
+        type: string
+        enum:
+          - PAID
+          - FREE
+      state:
+        type: string
+        enum:
+          - ACTIVE: for all unpaid services
+          - ACTIVE_PAID: active and after first payment
+          - ACTIVE_BEFORE_PAYMENT: signed contract, invoice generated, before first payment
+          - INACTIVE_UNINVOICED: signed contract, invoice not generated yet
+          - INACTIVE_ARRANGED: only arranged, not active yet, no signed contract
+          - CANCELED: home move or death
+          - CANCELED_UNPAID: arranged, signed, but never paid
+          - CANCELED_WITHDRAWAL: canceled with cession
+          - CANCELED_UNPROLONGED: service wasn't prolonged
+          - TERMINATED_STANDARD: standard termination
+          - TERMINATED_UNPAID: termination because of unpaid invoices
+          - TERMINATED: user termination
+          - INACTIVE: dafault, never used service
+      partner:
+        description: Present if service is conneted to partner.
+        type: object
+        properties:
+          firstname:
+            type: string
+          surname:
+            type: string
+          id:
+            type: number
+      pod:
+        description: EAN/EIC number. Referer to installation, present if connected to installation.
+        type: string
+      links:
+        description: |
+          Provides list of links for retrieving further information about the service. 'payments' link is provided
+          only for paid service.
+          'rel' values:
+            - contract
+            - payments
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+  Error:
+    type: object
+    required:
+      - code
+      - error_message
+    properties:
+      code:
+        type: string
+        enum:
+          - ERR_NO_PREPAYMENTS: No pre-payments found.
+          - ERR_NO_INVOICES: No invoices found.
+          - ERR_BACKEND_COMMUNICATION: Error calling the backend.
+          - ERR_NO_DATA_FOUND: No data found, general error.
+          - ERR_TOKEN_PARSE: JWT token parsing problem
+          - ERR_INVALID_PARAMETERS: Invalid parameters supplied
+      error_message:
+        type: string
+      parameters:
+        description: Name of parameters which caused this error.
+        type: array
+        items:
+          type: string
+      placeholders:
+        description: Values returned for placeholders in translated message.
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            type:
+              type: string
+            value:
+              type: string
+  DateRange:
+    type: object
+    properties:
+      from:
+        type: string
+        format: date-time
+      to:
+        type: string
+        format: date-time
+  Invoice:
+    type: object
+    required:
+      - due_date
+      - amount
+      - issue_date
+      - status
+      - document_number
+    properties:
+      due_date:
+        type: string
+        format: date-time
+      currency:
+        type: string
+        enum:
+          - CZK
+          - EUR
+      amount:
+        description: Amount that customer should pay.
+        type: number
+      amount_paid:
+        description: Amount that customer paied.
+        type: number
+      issue_date:
+        type: string
+        format: date-time
+      document_number:
+        type: number
+      period:
+        $ref: '#/definitions/DateRange'
+      status:
+        type: string
+        enum:
+          - PAID: A in SAP
+          - UNPAID: N in SAP
+          - UNPAID_OVERDUE: not in SAP
+          - PAID_PARTIALY: C in SAP
+          - OVERPAYMENT: not in SAP
+      online_payment:
+        $ref: '#/definitions/OnlinePayment'
+  Pre-payment:
+    type: object
+    required:
+      - due_date
+      - amount
+      - status
+    properties:
+      due_date:
+        type: string
+        format: date-time
+      currency:
+        type: string
+        enum:
+          - CZK
+          - EUR
+      amount:
+        type: number
+      amount_paid:
+        type: number
+      status:
+        type: string
+        enum:
+          - PAID: A in SAP
+          - UNPAID: N in SAP
+          - PAID_PARTIALY: C in SAP
+          - PAID_IN_INVOICE: not in SAP
+          - UNPAID_OVERDUE: not in SAP
+      online_payment:
+        $ref: '#/definitions/OnlinePayment'
+      links:
+        description: |
+          Links to bank account information, provided only if user's payment type requires bank information.
+          'rel' values:
+            - bank
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+  Partner:
+    type: object
+    properties:
+      firstname:
+        type: string
+      surname:
+        type: string
+      mobile:
+        type: string
+      email:
+        type: string
+      edit_email:
+        type: boolean
+      edit_mobile:
+        type: boolean
+      address:
+        $ref: '#/definitions/Address'
+      links:
+        description: |
+          Links to edit mobile and email.
+          'rel' values:
+            - edit-mobil
+            - edit-email
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+  Contract:
+    type: object
+    required:
+      - segment
+      - technical_details
+      - installation
+    properties:
+      segment:
+        type: string
+        enum:
+          - ELECTRICITY: E in ODS
+          - GAS: P in ODS
+      product_line:
+        description: fa
+        type: string
+      product_deliveries:
+        description: tisk
+        type: string
+      price_list:
+        description: cenik fa
+        type: string
+      add_ebill:
+        type: boolean
+      edit_pre_payment:
+        type: boolean
+      edit_address:
+        type: boolean
+      contact_address:
+        $ref: '#/definitions/Address'
+      technical_details:
+        $ref: '#/definitions/Technical-details'
+      installation:
+        $ref: '#/definitions/Installation'
+      links:
+        description: |
+          Links to edit contact address, pre-payments and opt-in for ebill.
+          'rel' values:
+            - edit-address
+            - edit-pre-payment
+            - add-ebill
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+  Technical-details:
+    type: object
+    properties:
+      object_usage:
+        description: General description of usage of object (famyli house)
+        type: string
+      distribution_rate:
+        description: Only electricity
+        type: string
+      tariff:
+        description: Only electricity
+        type: string
+      phases_count:
+        description: Only electricity
+        type: integer
+      breaker:
+        description: Only electricity
+        type: integer
+      estimated_consumption:
+        description: Only gas
+        type: string
+      water:
+        description: Only gas
+        type: boolean
+      cooking:
+        description: Only gas
+        type: boolean
+      heating:
+        description: Only gas
+        type: boolean
+      technology:
+        description: Only gas
+        type: boolean
+  Consumption:
+    type: object
+    properties:
+      period:
+        $ref: '#/definitions/DateRange'
+      high_tariff:
+        type: number
+        description: Consumed electricity in high tariff (overall consumption for 1 tariff installation)
+      low_tariff:
+        type: number
+        description: Consumed electricity in low tariff (only if installation has 2 tariffs)
+      tariff:
+        type: number
+        description: Consumed gass (only for gass commodity).
+      unit:
+        type: string
+  Service-contract:
+    type: object
+    properties:
+      contract_from:
+        type: string
+        format: date
+      validity:
+        $ref: '#/definitions/DateRange'
+      payment_periodicity:
+        type: string
+        enum:
+          - MONTHLY
+          - YEARLY
+          - QUARTERLY
+          - SEMIANNUALLY
+      price:
+        type: number
+        description: service fee per period (hodnota_produktu_netto)
+      payment_method:
+        type: string
+        enum:
+          - SIPO: Cumulated utility payments.
+          - DIRECT_DEBIT
+          - BANK_TRANSFER
+          - POSTAL
+      technical_name:
+        type: string
+        description: Service name
+      currency:
+        type: string
+        description: Currency code (e.g. CZK)
+      prolongation:
+        type: boolean
+        description: Contract prolongation indicator
+  Bank-connection:
+    type: object
+    properties:
+      account_number:
+        type: number
+      code_number:
+        type: number
+      country:
+        type: string
+  Address-autocomplete:
+    type: object
+    required:
+      - city
+    properties:
+      city:
+        type: string
+      city_part:
+        type: string
+      street:
+        type: string
+      links:
+        description: |
+          Link for next action.
+          'rel' values:
+            - next
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+  Hdo:
+    type: object
+    properties:
+      region:
+        type: string
+      validity:
+        $ref: '#/definitions/DateRange'
+      code:
+        type: number
+      command:
+        type: string
+      tariffs:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+            times:
+              type: array
+              items:
+                type: object
+                properties:
+                  days:
+                    type: string
+                  ranges:
+                    type: array
+                    items:
+                      $ref: '#/definitions/DateRange'
+  OnlinePayment:
+    type: object
+    properties:
+      status:
+        type: string
+        enum:
+          - NOT_POSSIBLE: No online payment possible.
+          - PAYMENT_IN_PROCESS: Online payment has been done and is in process.
+          - NOT_ALLOWED: Previous payment has to be done first.
+          - IN_REPAYMENT_SCHEDULE: Onlien payment has to be done wit repayment schedule
+          - READY: Online payment possibel via link "online-payment".
+      links:
+        type: array
+        description: |
+          Link online payment gateway.
+          'rel' values:
+            - online-payment
+        items:
+          $ref: '#/definitions/Link'
+  Field:
+    type: object
+    properties:
+      name:
+        type: string
+      rules:
+        type: array
+        items:
+          type: object
+          properties:
+            operation:
+              type: string
+            args:
+              type: object
+
+paths:
+  /:
+    get:
+      description: Root API.
+      responses:
+        200:
+          description: Gets all root links.
+          schema:
+            type: object
+            properties:
+              links:
+                description: |
+                  Links to payments (invoice, pre-payments), contract, partner and consumption.
+                  'rel' values:
+                    - installations
+                    - services
+                    - auto_complete
+                    - change-password
+                type: array
+                items:
+                  $ref: '#/definitions/Link'
+  /users/change-password:
+    post:
+      consumes:
+        - application/json
+      description: Changes user password.
+      parameters:
+        - in: body
+          name: body
+          description: New contact address.
+          required: true
+          schema:
+            type: object
+            properties:
+              oldPassword:
+                type: string
+              newPassword:
+                type: string
+      responses:
+        202:
+         description: Request processed
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /installations:
+    get:
+      description: Basic endpont for household information.
+      responses:
+        200:
+          description: Gets all installation places of logged user. Installation commodity type (power or gas) is determined by "segment" property.
+          schema:
+            type: object
+            properties:
+              installations:
+                type: array
+                items:
+                  $ref: '#/definitions/Installation'
+          examples:
+            application/json: |-
+              {"installations": [
+                {
+                "id": 4500061153,
+                "address":       {
+                   "house_number": 770,
+                   "city_part": "České Budějovice 3",
+                   "orientation_number": 5,
+                   "zip_code": "370 04",
+                   "street": "Kněžskodvorská",
+                   "city": "České Budějovice"
+                },
+                "segment": "ELECTRICITY",
+                "links":       [
+                            {
+                      "rel": "invoices",
+                      "href": "/payments/detail/invoices?installation=4500061153"
+                   },
+                            {
+                      "rel": "pre-payments",
+                      "href": "/payments/detail/bbp?installation=4500061153"
+                   },
+                            {
+                      "rel": "partner",
+                      "href": "/partners/5500117825"
+                   },
+                            {
+                      "rel": "contract",
+                      "href": "/contracts?pod=859182400102469434"
+                   }
+                ],
+                "partner": 5500117825,
+                "type": "CONSUMPTION",
+                "pod": 859182400102469434,
+                "consumption_place": 3500080218
+                },
+                {
+                "id": 4200007617,
+                "address":       {
+                   "house_number": 770,
+                   "city_part": "České Budějovice 3",
+                   "orientation_number": 5,
+                   "zip_code": "370 04",
+                   "street": "Kněžskodvorská",
+                   "city": "České Budějovice"
+                },
+                "segment": "GAS",
+                "links":       [
+                            {
+                      "rel": "invoices",
+                      "href": "/payments/detail/invoices?installation=4200007617"
+                   },
+                            {
+                      "rel": "pre-payments",
+                      "href": "/payments/detail/bbp?installation=4200007617"
+                   },
+                            {
+                      "rel": "partner",
+                      "href": "/partners/5500117825"
+                   },
+                            {
+                      "rel": "contract",
+                      "href": "/contracts?pod=27ZG900Z00822796"
+                   }
+                ],
+                "partner": 5500117825,
+                "type": "CONSUMPTION",
+                "pod": "27ZG900Z00822796",
+                "consumption_place": 3500080218
+                }
+              ]}
+        404:
+          description: No places found, ERR_NO_DATA_FOUND error returned.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /payments/detail/invoices:
+    get:
+      description: Payment information.
+      parameters:
+        - name: installation
+          description: Installation id.
+          in: query
+          required: true
+          type: integer
+        - name: from
+          description: Date from.
+          in: query
+          required: false
+          type: string
+          format: date
+          default: "1970-01-01"
+        - name: to
+          description: Date to, defaults to current date.
+          in: query
+          required: false
+          type: string
+          format: date
+        - name: limit
+          description: Maximum number of objects returned.
+          in: query
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Get all payments of given user for given installation.
+          schema:
+            type: object
+            properties:
+              payments:
+                type: array
+                items:
+                  $ref: '#/definitions/Invoice'
+              variable_symbol:
+                type: string
+                description: This node is returned ONLY in case online payment is allowed for the user (ie NO auto payment type).
+              links:
+                description: |
+                  Links to bank account information, provided only if user's payment type requires bank information.
+                  'rel' values:
+                    - bank
+                type: array
+                items:
+                  $ref: '#/definitions/Link'
+          examples:
+            application/json: |-
+              {
+                "payments": [
+                  {
+                    "due_date": "2016-03-29 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1196,
+                    "amount_paid": 0,
+                    "status": "UNPAID_OVERDUE",
+                    "issue_date": "2016-03-15 00:00:00",
+                    "period": {
+                      "from": "2016-01-31 23:00:00",
+                      "to": "2016-02-29 22:59:59"
+                    },
+                    "document_number": 9106643441
+                  },
+                  {
+                    "due_date": "2016-03-02 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1448,
+                    "amount_paid": 1448,
+                    "status": "PAID",
+                    "issue_date": "2016-02-17 00:00:00",
+                    "period": {
+                      "from": "2015-12-31 23:00:00",
+                      "to": "2016-01-31 22:59:59"
+                    },
+                    "document_number": 9106391495
+                  }
+                ],
+                "variable_symbol": "006300252859",
+                "links": [   {
+                      "rel": "bank",
+                        "href": "/payments/detail/invoices/bank?variable_symbol=006300252859"
+                  }]
+              }
+        404:
+          description: No invoices found, ERR_NO_DATA_FOUND error returned. Given installation hasn't been invoiced yet.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_TOKEN_PARSE
+            ERR_INVALID_PARAMETERS
+            ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /payments/detail/invoices/bank:
+    get:
+      description: Bank information
+      parameters:
+        - name: variable_symbol
+          description: Contract account id.
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Get invoice bank connection for E.ON.
+          schema:
+            type: object
+            properties:
+              variable_symbol:
+                type: number
+              eon_bank:
+                $ref: '#/definitions/Bank-connection'
+          examples:
+            application/json: |-
+              {
+                 "variable_symbol": "006360111111",
+                 "eon_bank":    {
+                    "account_number": "19-17608231",
+                    "code_number": "0100",
+                    "country": "CZ"
+                 }
+              }
+        404:
+          description: No bank connection found, ERR_NO_DATA_FOUND error returned.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /payments/detail/bbp:
+    get:
+      description: |
+        Pre-payment information. Contains list of pre-payments. If user payment type
+        supports online payment, link to bank detail and variable symbol is provided in the response.
+      parameters:
+        - name: installation
+          description: Installation id.
+          in: query
+          required: true
+          type: integer
+        - name: from
+          description: Date from.
+          in: query
+          required: false
+          type: string
+          format: date
+          default: "1970-01-01"
+        - name: to
+          description: Date to, defaults to current date.
+          in: query
+          required: false
+          type: string
+          format: date
+        - name: limit
+          description: Maximum number of objects returned.
+          in: query
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Get all payments of given user for given installation.
+          schema:
+            type: object
+            properties:
+              payments:
+                type: array
+                items:
+                  $ref: '#/definitions/Pre-payment'
+              variable_symbol:
+                type: string
+                description: This node is returned ONLY in case online payment is allowed for the user (ie NO auto payment type).
+              links:
+                description: |
+                  Links to bank account information, provided only if user's payment type requires bank information.
+                  'rel' values:
+                    - bank
+                type: array
+                items:
+                  $ref: '#/definitions/Link'
+          examples:
+            application/json: |-
+              {
+                "payments": [
+                  {
+                    "due_date": "2016-10-17 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1280,
+                    "amount_paid": 0,
+                    "status": "UNPAID"
+                  },
+                  {
+                    "due_date": "2016-09-15 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1280,
+                    "amount_paid": 0,
+                    "status": "UNPAID_OVERDUE"
+                  },
+                  {
+                    "due_date": "2016-08-15 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1280,
+                    "amount_paid": 0,
+                    "status": "UNPAID_OVERDUE"
+                  },
+                  {
+                    "due_date": "2016-02-15 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1280,
+                    "amount_paid": 1280,
+                    "status": "PAID"
+                  }
+                ],
+                "variable_symbol": "006300252859",
+                "links": [   {
+                    "rel": "bank",
+                    "href": "/payments/detail/bbp/bank?variable_symbol=006300252859"
+                  }]
+              }
+        400:
+          description: No pre-payments plan set for the installation, ERR_NO_PREPAYMENTS error returned.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        404:
+          description: No pre-payments found, ERR_NO_DATA_FOUND error returned.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_TOKEN_PARSE
+            ERR_INVALID_PARAMETERS
+            ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /payments/detail/bbp/bank:
+    get:
+      description: Bank information
+      parameters:
+        - name: variable_symbol
+          description: Contract account id.
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Get pre-payments bank connection for E.ON.
+          schema:
+            type: object
+            properties:
+              variable_symbol:
+                type: number
+              eon_bank:
+                $ref: '#/definitions/Bank-connection'
+          examples:
+            application/json: |-
+              {
+                 "variable_symbol": "006360111111",
+                 "eon_bank":    {
+                    "account_number": "19-17608231",
+                    "code_number": "0100",
+                    "country": "CZ"
+                 }
+              }
+
+        404:
+          description: No bank connection found, ERR_NO_DATA_FOUND error returned.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /partners/{id}:
+    get:
+      parameters:
+        - name: id
+          description: Id of business partner.
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Get information about business partner.
+          schema:
+            $ref: '#/definitions/Partner'
+          examples:
+            application/json: |-
+              {
+                 "firstname": "Luděk",
+                 "surname": "Drobek",
+                 "email": "lucie.drobkova@seznam.cz",
+                 "mobile": 602710904,
+                 "telephone": null,
+                 "address":    {
+                    "zip_code": "615 00",
+                    "city": "Brno",
+                    "city_part": "Židenice",
+                    "street": "Tenorova",
+                    "house_number": 3521,
+                    "orientation_number": 27
+                 }
+              }
+        404:
+          description: No business partner found - ERR_NO_DATA_FOUND.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /partners/{id}/email:
+    parameters:
+      - name: id
+        description: Id of business partner.
+        in: path
+        required: true
+        type: integer
+    post:
+      consumes:
+        - application/json
+      description: Changes email address.
+      parameters:
+        - in: body
+          name: body
+          description: New contact address.
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      responses:
+        202:
+          description: Request was validated and strored in queue.
+        400:
+          description: Validation error.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /partners/{id}/mobile:
+    parameters:
+      - name: id
+        description: Id of business partner.
+        in: path
+        required: true
+        type: integer
+    post:
+      consumes:
+        - application/json
+      description: Changes mobile number.
+      parameters:
+        - in: body
+          name: body
+          description: New mobile number.
+          required: true
+          schema:
+            type: object
+            properties:
+              mobile:
+                type: string
+      responses:
+        202:
+          description: Request was validated and strored in queue.
+        400:
+          description: Validation error.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /contracts/commodity:
+    get:
+      parameters:
+        - name: pod
+          description: Pod id (EAN/EIC).
+          in: query
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Contract account and contract information.
+          schema:
+            $ref: '#/definitions/Contract'
+          examples:
+            application/json: |-
+              {
+              	"segment": "ELECTRICITY",
+              	"product_line": "Variant",
+              	"product_deliveries": "Aku",
+              	"price_list": "Variant 24 Září 2015",
+              	"contact_information": {
+              		"address": {
+              			"zip_code": "397 01",
+              			"city": "Písek",
+              			"city_part": "Budějovické Předměstí",
+              			"street": "Rokycanova",
+              			"house_number": 1222,
+              			"orientation_number": null
+              		}
+              	},
+              	"technical_details": {
+              		"object_usage": null,
+              		"distribution_rate": "D26d",
+              		"tariff": "Jednotarif",
+              		"phases_count": 3,
+              		"breaker": 50
+              	},
+              	"installation": {
+              		"id": 4500317250,
+              		"segment": "ELECTRICITY",
+              		"consumption_place": 3500286344,
+              		"type": "CONSUMPTION",
+              		"pod": 859182400102646743,
+              		"address": {
+              			"zip_code": "397 01",
+              			"city": "Písek",
+              			"city_part": "Budějovické Předměstí",
+              			"street": "Rokycanova",
+              			"house_number": 1222,
+              			"orientation_number": null
+              		}
+              	}
+              }
+        404:
+          description: No contract found.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: General Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /contracts/commodity/address:
+    parameters:
+      - name: installation
+        description: Installation id.
+        in: query
+        required: true
+        type: integer
+    post:
+      consumes:
+        - application/json
+      description: Changes the contact address.
+      parameters:
+        - in: body
+          name: body
+          description: New contact address.
+          required: true
+          schema:
+            $ref: "#/definitions/Address"
+      responses:
+        202:
+          description: Request was validated and strored in queue.
+        400:
+          description: Validation error.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /contracts/commodity/bbp:
+    parameters:
+      - name: installation
+        description: Installation id.
+        in: query
+        required: true
+        type: integer
+    post:
+      consumes:
+        - application/json
+      description: Changes pre-payment amount.
+      parameters:
+        - in: body
+          name: body
+          description: New pre-payment amount and date from which it should be changed.
+          required: true
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              amount:
+                type: number
+      responses:
+        202:
+          description: Request was validated and strored in queue.
+        400:
+          description: Validation error.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /contracts/commodity/ebill:
+    parameters:
+      - name: installation
+        description: Installation id.
+        in: query
+        required: true
+        type: integer
+    post:
+      consumes:
+        - application/json
+      description: Ebill activation.
+      parameters:
+        - in: body
+          name: body
+          description: Ebill email address.
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: array
+                items:
+                  type: string
+      responses:
+        202:
+          description: Request was validated and strored in queue.
+        400:
+          description: Validation error.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /contracts/services/{contract_number}:
+    get:
+      parameters:
+        - name: contract_number
+          description: Contract identifier.
+          in: path
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Contract account and contract information.
+          schema:
+            $ref: '#/definitions/Service-contract'
+          examples:
+            application/json: |-
+              {
+                "contract_from":"2014-05-01",
+                "validity":{
+                  "from":"2016-05-01",
+                  "to":"2017-04-30"
+                },
+                "payment_periodicity":"MONTHLY",
+                "price":149,
+                "payment_method":"BANK_TRANSFER",
+                "technical_name":"ZAJISTENI",
+                "currency":"CZK",
+                "prolongation":true
+              }
+        404:
+          description: No contract found.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: General Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /services:
+    get:
+      produces:
+        - application/json
+      parameters:
+        - name: status
+          description: Service statuses to filter the list by (CSV format)
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: Services for business partner and his installation places returned.
+          schema:
+            type: object
+            properties:
+              services:
+                type: array
+                items:
+                  $ref: '#/definitions/Service'
+          examples:
+            application/json: |-
+              {
+                "services": [
+                  {
+                    "code": "TESCO",
+                    "name": "Tesco Clubcard ",
+                    "type": "FREE",
+                    "state": "ACTIVE",
+                    "partner": {
+                      "firstname": "Ji\u0159\u00ed",
+                      "surname": "Rektorys",
+                      "id": 5500091174
+                    }
+                  },
+                  {
+                    "code": "SERVIS_KOTLU",
+                    "name": "E.ON Servis kotl\u016f",
+                    "type": "PAID",
+                    "state": "INACTIVE",
+                    "partner": {
+                      "firstname": "Ji\u0159\u00ed",
+                      "surname": "Rektorys",
+                      "id": 5500091174
+                    }
+                  },
+                  {
+                    "code": "ZDRAVI",
+                    "name": "E.ON Zdrav\u00ed",
+                    "type": "PAID",
+                    "state": "INACTIVE",
+                    "partner": {
+                      "firstname": "Ji\u0159\u00ed",
+                      "surname": "Rektorys",
+                      "id": 5500091174
+                    }
+                  },
+                  {
+                    "code": "SERVIS_PLUS",
+                    "name": "E.ON Servis+",
+                    "type": "PAID",
+                    "state": "INACTIVE",
+                    "pod": 859182400211738278
+                  },
+                  {
+                    "code": "BENEFIT",
+                    "name": "Benefit",
+                    "type": "FREE",
+                    "state": "INACTIVE",
+                    "pod": 859182400211738278
+                  }
+                ]
+              }
+        404:
+          description: No services found for user - ERR_NO_DATA_FOUND.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: General Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /installations/{id}/consumption:
+    get:
+      description: |-
+        Returns consumption data for given installation. Electricity
+        values are separated into high ('high_tariff') and low tariff ('low_tariff'). Low tariff is ommited if installation contract is for single tariff only.
+        Gass consumption uses only one tariff ('tariff').
+        By default consumption data are limited to start and end of the contract.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Installation identifier
+          in: path
+          required: true
+          type: integer
+        - name: from
+          in: query
+          required: false
+          type: string
+        - name: to
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: Consumption levels per high and low tariff.
+          schema:
+            type: object
+            properties:
+              consumption:
+                type: array
+                items:
+                  $ref: '#/definitions/Consumption'
+              links:
+                description: |
+                  Link for next action.
+                  'rel' values:
+                    - hdo-times
+                type: array
+                items:
+                  $ref: '#/definitions/Link'
+          examples:
+            application/json: |-
+              {
+                "consumption": [
+                  {
+                    "period": {
+                      "from": "2012-09-05 00:00:00",
+                      "to": "2013-08-21 00:00:00"
+                    },
+                    "high_tariff": 2294,
+                    "low_tariff": 3000,
+                    "unit": "KWh"
+                  },
+                  {
+                    "period": {
+                      "from": "2013-08-22 00:00:00",
+                      "to": "2014-09-03 00:00:00"
+                    },
+                    "high_tariff": 2642,
+                    "low_tariff": 2420,
+                    "unit": "KWh"
+                  },
+                  {
+                    "period": {
+                      "from": "2014-09-04 00:00:00",
+                      "to": "2015-09-01 00:00:00"
+                    },
+                    "high_tariff": 2402,
+                    "low_tariff": 1430,
+                    "unit": "KWh"
+                  }
+                ]
+              }
+
+        404:
+          description: No data found for user - ERR_NO_DATA_FOUND.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: General Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /installations/{id}/meters:
+    parameters:
+      - name: serial_number
+        description: Meter id.
+        in: query
+        required: true
+        type: integer
+      - name: id
+        description: Installation identifier
+        in: path
+        required: true
+        type: integer
+    post:
+      consumes:
+        - application/json
+      description: Submit meter read.
+      parameters:
+        - in: body
+          name: body
+          description: Meter read values.
+          required: true
+          schema:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              high_tariff:
+                type: number
+              low_tariff:
+                type: number
+      responses:
+        202:
+          description: Request was validated and strored in queue.
+        400:
+          description: Validation error.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /payments/detail/services:
+    get:
+      description: Payment information
+      parameters:
+        - name: contract_number
+          description: Service identifier.
+          in: query
+          required: true
+          type: integer
+        - name: from
+          description: Date from.
+          in: query
+          required: false
+          type: string
+          format: date
+          default: "1970-01-01"
+        - name: to
+          description: Date to, defaults to current date.
+          in: query
+          required: false
+          type: string
+          format: date
+        - name: limit
+          description: Maximum number of objects returned.
+          in: query
+          required: false
+          type: integer
+      responses:
+        200:
+          description: Get all payments of given user for given installation.
+          schema:
+            type: object
+            properties:
+              payments:
+                type: array
+                items:
+                  $ref: '#/definitions/Invoice'
+          examples:
+            application/json: |-
+              {
+                "payments": [
+                  {
+                    "due_date": "2016-03-29 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1196,
+                    "amount_paid": 0,
+                    "status": "UNPAID_OVERDUE",
+                    "issue_date": "2016-03-15 00:00:00",
+                    "period": {
+                      "from": "2016-01-31 23:00:00",
+                      "to": "2016-02-29 22:59:59"
+                    },
+                    "document_number": 9106643441
+                  },
+                  {
+                    "due_date": "2016-03-02 00:00:00",
+                    "currency": "CZK",
+                    "amount": 1448,
+                    "amount_paid": 1448,
+                    "status": "PAID",
+                    "issue_date": "2016-02-17 00:00:00",
+                    "period": {
+                      "from": "2015-12-31 23:00:00",
+                      "to": "2016-01-31 22:59:59"
+                    },
+                    "document_number": 9106391495
+                  }
+                ]
+              }
+        404:
+          description: No invoices found, ERR_NO_DATA_FOUND error returned. Given installation hasn't been invoiced yet.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_TOKEN_PARSE
+            ERR_INVALID_PARAMETERS
+            ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /address/auto-complete:
+    get:
+      description: Variation of address for given parameters
+      parameters:
+        - name: zip_code
+          in: query
+          required: true
+          type: string
+        - name: city
+          in: query
+          required: false
+          type: string
+        - name: street
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: Variation of address for given parameters
+          schema:
+            type: object
+            properties:
+              address:
+                type: array
+                items:
+                  $ref: '#/definitions/Address-autocomplete'
+        404:
+          description: No data found, ERR_NO_DATA_FOUND error returned.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /hdo/{region}/{code}:
+    get:
+      description: Get HDO times
+      parameters:
+        - name: region
+          in: path
+          required: true
+          type: string
+        - name: code
+          in: path
+          required: true
+          type: string
+        - name: date
+          in: query
+          required: false
+          type: string
+          default: current date
+      responses:
+        200:
+          description: HDO times
+          schema:
+            $ref: '#/definitions/Hdo'
+        404:
+          description: No data found, ERR_NO_DATA_FOUND error returned.
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /validation/address:
+    get:
+      description: Get address validation rules.
+      responses:
+        200:
+          description: Validation rules.
+          schema:
+            type: object
+            properties:
+              fields:
+                type: array
+                description: fields of Address object
+                items:
+                  $ref: '#/definitions/Field'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /validation/contacts:
+    get:
+      description: Get contacts validation rules.
+      responses:
+        200:
+          description: Validation rules.
+          schema:
+            type: object
+            properties:
+              fields:
+                type: array
+                description: Email and mobile fields.
+                items:
+                  $ref: '#/definitions/Field'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /validation/pre-payment:
+    get:
+      description: Get pre-payment validation rules.
+      responses:
+        200:
+          description: Validation rules.
+          schema:
+            type: object
+            properties:
+              fields:
+                type: array
+                description: Date and amount fields.
+                items:
+                  $ref: '#/definitions/Field'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'
+  /validation/meter-reading:
+    get:
+      description: Get meter reading validation rules.
+      responses:
+        200:
+          description: Validation rules.
+          schema:
+            type: object
+            properties:
+              fields:
+                type: array
+                description: Date, high and low tariff fields.
+                items:
+                  $ref: '#/definitions/Field'
+        500:
+          description: Backend Error - ERR_BACKEND_COMMUNICATION
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/definitions/Error'

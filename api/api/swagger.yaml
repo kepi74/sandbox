@@ -1,0 +1,1439 @@
+---
+swagger: "2.0"
+info:
+  version: "v1"
+  title: "API for household"
+basePath: "/api/ece/selfcare/mo"
+schemes:
+- "https"
+security:
+- Oauth2Password:
+  - "openid"
+- Oauth2Code:
+  - "openid"
+paths:
+  /:
+    get:
+      description: "Root API."
+      operationId: "rootGET"
+      parameters: []
+      responses:
+        200:
+          description: "Gets all root links."
+          schema:
+            $ref: "#/definitions/inline_response_200"
+      x-swagger-router-controller: "Default"
+  /users/change-password:
+    post:
+      description: "Changes user password."
+      operationId: "usersChange_passwordPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "New contact address."
+        required: true
+        schema:
+          $ref: "#/definitions/body"
+      responses:
+        202:
+          description: "Request processed"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /installations:
+    get:
+      description: "Basic endpont for household information."
+      operationId: "installationsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Gets all installation places of logged user. Installation\
+            \ commodity type (power or gas) is determined by \"segment\" property."
+          schema:
+            $ref: "#/definitions/inline_response_200_1"
+          examples:
+            application/json: "{\"installations\": [\n  {\n  \"id\": 4500061153,\n\
+              \  \"address\":       {\n     \"house_number\": 770,\n     \"city_part\"\
+              : \"České Budějovice 3\",\n     \"orientation_number\": 5,\n     \"\
+              zip_code\": \"370 04\",\n     \"street\": \"Kněžskodvorská\",\n    \
+              \ \"city\": \"České Budějovice\"\n  },\n  \"segment\": \"ELECTRICITY\"\
+              ,\n  \"links\":       [\n              {\n        \"rel\": \"invoices\"\
+              ,\n        \"href\": \"/payments/detail/invoices?installation=4500061153\"\
+              \n     },\n              {\n        \"rel\": \"pre-payments\",\n   \
+              \     \"href\": \"/payments/detail/bbp?installation=4500061153\"\n \
+              \    },\n              {\n        \"rel\": \"partner\",\n        \"\
+              href\": \"/partners/5500117825\"\n     },\n              {\n       \
+              \ \"rel\": \"contract\",\n        \"href\": \"/contracts?pod=859182400102469434\"\
+              \n     }\n  ],\n  \"partner\": 5500117825,\n  \"type\": \"CONSUMPTION\"\
+              ,\n  \"pod\": 859182400102469434,\n  \"consumption_place\": 3500080218\n\
+              \  },\n  {\n  \"id\": 4200007617,\n  \"address\":       {\n     \"house_number\"\
+              : 770,\n     \"city_part\": \"České Budějovice 3\",\n     \"orientation_number\"\
+              : 5,\n     \"zip_code\": \"370 04\",\n     \"street\": \"Kněžskodvorská\
+              \",\n     \"city\": \"České Budějovice\"\n  },\n  \"segment\": \"GAS\"\
+              ,\n  \"links\":       [\n              {\n        \"rel\": \"invoices\"\
+              ,\n        \"href\": \"/payments/detail/invoices?installation=4200007617\"\
+              \n     },\n              {\n        \"rel\": \"pre-payments\",\n   \
+              \     \"href\": \"/payments/detail/bbp?installation=4200007617\"\n \
+              \    },\n              {\n        \"rel\": \"partner\",\n        \"\
+              href\": \"/partners/5500117825\"\n     },\n              {\n       \
+              \ \"rel\": \"contract\",\n        \"href\": \"/contracts?pod=27ZG900Z00822796\"\
+              \n     }\n  ],\n  \"partner\": 5500117825,\n  \"type\": \"CONSUMPTION\"\
+              ,\n  \"pod\": \"27ZG900Z00822796\",\n  \"consumption_place\": 3500080218\n\
+              \  }\n]}"
+        404:
+          description: "No places found, ERR_NO_DATA_FOUND error returned."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /payments/detail/invoices:
+    get:
+      description: "Payment information."
+      operationId: "paymentsDetailInvoicesGET"
+      parameters:
+      - name: "installation"
+        in: "query"
+        description: "Installation id."
+        required: true
+        type: "integer"
+      - name: "from"
+        in: "query"
+        description: "Date from."
+        required: false
+        type: "string"
+        default: "1970-01-01"
+        format: "date"
+      - name: "to"
+        in: "query"
+        description: "Date to, defaults to current date."
+        required: false
+        type: "string"
+        format: "date"
+      - name: "limit"
+        in: "query"
+        description: "Maximum number of objects returned."
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "Get all payments of given user for given installation."
+          schema:
+            $ref: "#/definitions/inline_response_200_2"
+          examples:
+            application/json: "{\n  \"payments\": [\n    {\n      \"due_date\": \"\
+              2016-03-29 00:00:00\",\n      \"currency\": \"CZK\",\n      \"amount\"\
+              : 1196,\n      \"amount_paid\": 0,\n      \"status\": \"UNPAID_OVERDUE\"\
+              ,\n      \"issue_date\": \"2016-03-15 00:00:00\",\n      \"period\"\
+              : {\n        \"from\": \"2016-01-31 23:00:00\",\n        \"to\": \"\
+              2016-02-29 22:59:59\"\n      },\n      \"document_number\": 9106643441\n\
+              \    },\n    {\n      \"due_date\": \"2016-03-02 00:00:00\",\n     \
+              \ \"currency\": \"CZK\",\n      \"amount\": 1448,\n      \"amount_paid\"\
+              : 1448,\n      \"status\": \"PAID\",\n      \"issue_date\": \"2016-02-17\
+              \ 00:00:00\",\n      \"period\": {\n        \"from\": \"2015-12-31 23:00:00\"\
+              ,\n        \"to\": \"2016-01-31 22:59:59\"\n      },\n      \"document_number\"\
+              : 9106391495\n    }\n  ],\n  \"variable_symbol\": \"006300252859\",\n\
+              \  \"links\": [   {\n        \"rel\": \"bank\",\n          \"href\"\
+              : \"/payments/detail/invoices/bank?variable_symbol=006300252859\"\n\
+              \    }]\n}"
+        404:
+          description: "No invoices found, ERR_NO_DATA_FOUND error returned. Given\
+            \ installation hasn't been invoiced yet."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_TOKEN_PARSE ERR_INVALID_PARAMETERS ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /payments/detail/invoices/bank:
+    get:
+      description: "Bank information"
+      operationId: "paymentsDetailInvoicesBankGET"
+      parameters:
+      - name: "variable_symbol"
+        in: "query"
+        description: "Contract account id."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Get invoice bank connection for E.ON."
+          schema:
+            $ref: "#/definitions/inline_response_200_3"
+          examples:
+            application/json: "{\n   \"variable_symbol\": \"006360111111\",\n   \"\
+              eon_bank\":    {\n      \"account_number\": \"19-17608231\",\n     \
+              \ \"code_number\": \"0100\",\n      \"country\": \"CZ\"\n   }\n}"
+        404:
+          description: "No bank connection found, ERR_NO_DATA_FOUND error returned."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /payments/detail/bbp:
+    get:
+      description: "Pre-payment information. Contains list of pre-payments. If user\
+        \ payment type\nsupports online payment, link to bank detail and variable\
+        \ symbol is provided in the response.\n"
+      operationId: "paymentsDetailBbpGET"
+      parameters:
+      - name: "installation"
+        in: "query"
+        description: "Installation id."
+        required: true
+        type: "integer"
+      - name: "from"
+        in: "query"
+        description: "Date from."
+        required: false
+        type: "string"
+        default: "1970-01-01"
+        format: "date"
+      - name: "to"
+        in: "query"
+        description: "Date to, defaults to current date."
+        required: false
+        type: "string"
+        format: "date"
+      - name: "limit"
+        in: "query"
+        description: "Maximum number of objects returned."
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "Get all payments of given user for given installation."
+          schema:
+            $ref: "#/definitions/inline_response_200_4"
+          examples:
+            application/json: "{\n  \"payments\": [\n    {\n      \"due_date\": \"\
+              2016-10-17 00:00:00\",\n      \"currency\": \"CZK\",\n      \"amount\"\
+              : 1280,\n      \"amount_paid\": 0,\n      \"status\": \"UNPAID\"\n \
+              \   },\n    {\n      \"due_date\": \"2016-09-15 00:00:00\",\n      \"\
+              currency\": \"CZK\",\n      \"amount\": 1280,\n      \"amount_paid\"\
+              : 0,\n      \"status\": \"UNPAID_OVERDUE\"\n    },\n    {\n      \"\
+              due_date\": \"2016-08-15 00:00:00\",\n      \"currency\": \"CZK\",\n\
+              \      \"amount\": 1280,\n      \"amount_paid\": 0,\n      \"status\"\
+              : \"UNPAID_OVERDUE\"\n    },\n    {\n      \"due_date\": \"2016-02-15\
+              \ 00:00:00\",\n      \"currency\": \"CZK\",\n      \"amount\": 1280,\n\
+              \      \"amount_paid\": 1280,\n      \"status\": \"PAID\"\n    }\n \
+              \ ],\n  \"variable_symbol\": \"006300252859\",\n  \"links\": [   {\n\
+              \      \"rel\": \"bank\",\n      \"href\": \"/payments/detail/bbp/bank?variable_symbol=006300252859\"\
+              \n    }]\n}"
+        400:
+          description: "No pre-payments plan set for the installation, ERR_NO_PREPAYMENTS\
+            \ error returned."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        404:
+          description: "No pre-payments found, ERR_NO_DATA_FOUND error returned."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_TOKEN_PARSE ERR_INVALID_PARAMETERS ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /payments/detail/bbp/bank:
+    get:
+      description: "Bank information"
+      operationId: "paymentsDetailBbpBankGET"
+      parameters:
+      - name: "variable_symbol"
+        in: "query"
+        description: "Contract account id."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Get pre-payments bank connection for E.ON."
+          schema:
+            $ref: "#/definitions/inline_response_200_3"
+          examples:
+            application/json: "{\n   \"variable_symbol\": \"006360111111\",\n   \"\
+              eon_bank\":    {\n      \"account_number\": \"19-17608231\",\n     \
+              \ \"code_number\": \"0100\",\n      \"country\": \"CZ\"\n   }\n}"
+        404:
+          description: "No bank connection found, ERR_NO_DATA_FOUND error returned."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /partners/{id}:
+    get:
+      operationId: "partnersIdGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of business partner."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Get information about business partner."
+          schema:
+            $ref: "#/definitions/Partner"
+          examples:
+            application/json: "{\n   \"firstname\": \"Luděk\",\n   \"surname\": \"\
+              Drobek\",\n   \"email\": \"lucie.drobkova@seznam.cz\",\n   \"mobile\"\
+              : 602710904,\n   \"telephone\": null,\n   \"address\":    {\n      \"\
+              zip_code\": \"615 00\",\n      \"city\": \"Brno\",\n      \"city_part\"\
+              : \"Židenice\",\n      \"street\": \"Tenorova\",\n      \"house_number\"\
+              : 3521,\n      \"orientation_number\": 27\n   }\n}"
+        404:
+          description: "No business partner found - ERR_NO_DATA_FOUND."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /partners/{id}/email:
+    post:
+      description: "Changes email address."
+      operationId: "partnersIdEmailPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of business partner."
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "New contact address."
+        required: true
+        schema:
+          $ref: "#/definitions/body_1"
+      responses:
+        202:
+          description: "Request was validated and strored in queue."
+        400:
+          description: "Validation error."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /partners/{id}/mobile:
+    post:
+      description: "Changes mobile number."
+      operationId: "partnersIdMobilePOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Id of business partner."
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "New mobile number."
+        required: true
+        schema:
+          $ref: "#/definitions/body_2"
+      responses:
+        202:
+          description: "Request was validated and strored in queue."
+        400:
+          description: "Validation error."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /contracts/commodity:
+    get:
+      operationId: "contractsCommodityGET"
+      parameters:
+      - name: "pod"
+        in: "query"
+        description: "Pod id (EAN/EIC)."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Contract account and contract information."
+          schema:
+            $ref: "#/definitions/Contract"
+          examples:
+            application/json: "{\n\t\"segment\": \"ELECTRICITY\",\n\t\"product_line\"\
+              : \"Variant\",\n\t\"product_deliveries\": \"Aku\",\n\t\"price_list\"\
+              : \"Variant 24 Září 2015\",\n\t\"contact_information\": {\n\t\t\"address\"\
+              : {\n\t\t\t\"zip_code\": \"397 01\",\n\t\t\t\"city\": \"Písek\",\n\t\
+              \t\t\"city_part\": \"Budějovické Předměstí\",\n\t\t\t\"street\": \"\
+              Rokycanova\",\n\t\t\t\"house_number\": 1222,\n\t\t\t\"orientation_number\"\
+              : null\n\t\t}\n\t},\n\t\"technical_details\": {\n\t\t\"object_usage\"\
+              : null,\n\t\t\"distribution_rate\": \"D26d\",\n\t\t\"tariff\": \"Jednotarif\"\
+              ,\n\t\t\"phases_count\": 3,\n\t\t\"breaker\": 50\n\t},\n\t\"installation\"\
+              : {\n\t\t\"id\": 4500317250,\n\t\t\"segment\": \"ELECTRICITY\",\n\t\t\
+              \"consumption_place\": 3500286344,\n\t\t\"type\": \"CONSUMPTION\",\n\
+              \t\t\"pod\": 859182400102646743,\n\t\t\"address\": {\n\t\t\t\"zip_code\"\
+              : \"397 01\",\n\t\t\t\"city\": \"Písek\",\n\t\t\t\"city_part\": \"Budě\
+              jovické Předměstí\",\n\t\t\t\"street\": \"Rokycanova\",\n\t\t\t\"house_number\"\
+              : 1222,\n\t\t\t\"orientation_number\": null\n\t\t}\n\t}\n}"
+        404:
+          description: "No contract found."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "General Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /contracts/commodity/address:
+    post:
+      description: "Changes the contact address."
+      operationId: "contractsCommodityAddressPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "installation"
+        in: "query"
+        description: "Installation id."
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "New contact address."
+        required: true
+        schema:
+          $ref: "#/definitions/Address"
+      responses:
+        202:
+          description: "Request was validated and strored in queue."
+        400:
+          description: "Validation error."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /contracts/commodity/bbp:
+    post:
+      description: "Changes pre-payment amount."
+      operationId: "contractsCommodityBbpPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "installation"
+        in: "query"
+        description: "Installation id."
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "New pre-payment amount and date from which it should be changed."
+        required: true
+        schema:
+          $ref: "#/definitions/body_3"
+      responses:
+        202:
+          description: "Request was validated and strored in queue."
+        400:
+          description: "Validation error."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /contracts/commodity/ebill:
+    post:
+      description: "Ebill activation."
+      operationId: "contractsCommodityEbillPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "installation"
+        in: "query"
+        description: "Installation id."
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "Ebill email address."
+        required: true
+        schema:
+          $ref: "#/definitions/body_4"
+      responses:
+        202:
+          description: "Request was validated and strored in queue."
+        400:
+          description: "Validation error."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /contracts/services/{contract_number}:
+    get:
+      operationId: "contractsServicesContract_numberGET"
+      parameters:
+      - name: "contract_number"
+        in: "path"
+        description: "Contract identifier."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Contract account and contract information."
+          schema:
+            $ref: "#/definitions/Service-contract"
+          examples:
+            application/json: "{\n  \"contract_from\":\"2014-05-01\",\n  \"validity\"\
+              :{\n    \"from\":\"2016-05-01\",\n    \"to\":\"2017-04-30\"\n  },\n\
+              \  \"payment_periodicity\":\"MONTHLY\",\n  \"price\":149,\n  \"payment_method\"\
+              :\"BANK_TRANSFER\",\n  \"technical_name\":\"ZAJISTENI\",\n  \"currency\"\
+              :\"CZK\",\n  \"prolongation\":true\n}"
+        404:
+          description: "No contract found."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "General Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /services:
+    get:
+      operationId: "servicesGET"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "status"
+        in: "query"
+        description: "Service statuses to filter the list by (CSV format)"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Services for business partner and his installation places\
+            \ returned."
+          schema:
+            $ref: "#/definitions/inline_response_200_5"
+          examples:
+            application/json: "{\n  \"services\": [\n    {\n      \"code\": \"TESCO\"\
+              ,\n      \"name\": \"Tesco Clubcard \",\n      \"type\": \"FREE\",\n\
+              \      \"state\": \"ACTIVE\",\n      \"partner\": {\n        \"firstname\"\
+              : \"Ji\\u0159\\u00ed\",\n        \"surname\": \"Rektorys\",\n      \
+              \  \"id\": 5500091174\n      }\n    },\n    {\n      \"code\": \"SERVIS_KOTLU\"\
+              ,\n      \"name\": \"E.ON Servis kotl\\u016f\",\n      \"type\": \"\
+              PAID\",\n      \"state\": \"INACTIVE\",\n      \"partner\": {\n    \
+              \    \"firstname\": \"Ji\\u0159\\u00ed\",\n        \"surname\": \"Rektorys\"\
+              ,\n        \"id\": 5500091174\n      }\n    },\n    {\n      \"code\"\
+              : \"ZDRAVI\",\n      \"name\": \"E.ON Zdrav\\u00ed\",\n      \"type\"\
+              : \"PAID\",\n      \"state\": \"INACTIVE\",\n      \"partner\": {\n\
+              \        \"firstname\": \"Ji\\u0159\\u00ed\",\n        \"surname\":\
+              \ \"Rektorys\",\n        \"id\": 5500091174\n      }\n    },\n    {\n\
+              \      \"code\": \"SERVIS_PLUS\",\n      \"name\": \"E.ON Servis+\"\
+              ,\n      \"type\": \"PAID\",\n      \"state\": \"INACTIVE\",\n     \
+              \ \"pod\": 859182400211738278\n    },\n    {\n      \"code\": \"BENEFIT\"\
+              ,\n      \"name\": \"Benefit\",\n      \"type\": \"FREE\",\n      \"\
+              state\": \"INACTIVE\",\n      \"pod\": 859182400211738278\n    }\n \
+              \ ]\n}"
+        404:
+          description: "No services found for user - ERR_NO_DATA_FOUND."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "General Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /installations/{id}/consumption:
+    get:
+      description: "Returns consumption data for given installation. Electricity\n\
+        values are separated into high ('high_tariff') and low tariff ('low_tariff').\
+        \ Low tariff is ommited if installation contract is for single tariff only.\n\
+        Gass consumption uses only one tariff ('tariff').\nBy default consumption\
+        \ data are limited to start and end of the contract."
+      operationId: "installationsIdConsumptionGET"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Installation identifier"
+        required: true
+        type: "integer"
+      - name: "from"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "to"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Consumption levels per high and low tariff."
+          schema:
+            $ref: "#/definitions/inline_response_200_6"
+          examples:
+            application/json: "{\n  \"consumption\": [\n    {\n      \"period\": {\n\
+              \        \"from\": \"2012-09-05 00:00:00\",\n        \"to\": \"2013-08-21\
+              \ 00:00:00\"\n      },\n      \"high_tariff\": 2294,\n      \"low_tariff\"\
+              : 3000,\n      \"unit\": \"KWh\"\n    },\n    {\n      \"period\": {\n\
+              \        \"from\": \"2013-08-22 00:00:00\",\n        \"to\": \"2014-09-03\
+              \ 00:00:00\"\n      },\n      \"high_tariff\": 2642,\n      \"low_tariff\"\
+              : 2420,\n      \"unit\": \"KWh\"\n    },\n    {\n      \"period\": {\n\
+              \        \"from\": \"2014-09-04 00:00:00\",\n        \"to\": \"2015-09-01\
+              \ 00:00:00\"\n      },\n      \"high_tariff\": 2402,\n      \"low_tariff\"\
+              : 1430,\n      \"unit\": \"KWh\"\n    }\n  ]\n}"
+        404:
+          description: "No data found for user - ERR_NO_DATA_FOUND."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "General Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /installations/{id}/meters:
+    post:
+      description: "Submit meter read."
+      operationId: "installationsIdMetersPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "serial_number"
+        in: "query"
+        description: "Meter id."
+        required: true
+        type: "integer"
+      - name: "id"
+        in: "path"
+        description: "Installation identifier"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "Meter read values."
+        required: true
+        schema:
+          $ref: "#/definitions/body_5"
+      responses:
+        202:
+          description: "Request was validated and strored in queue."
+        400:
+          description: "Validation error."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /payments/detail/services:
+    get:
+      description: "Payment information"
+      operationId: "paymentsDetailServicesGET"
+      parameters:
+      - name: "contract_number"
+        in: "query"
+        description: "Service identifier."
+        required: true
+        type: "integer"
+      - name: "from"
+        in: "query"
+        description: "Date from."
+        required: false
+        type: "string"
+        default: "1970-01-01"
+        format: "date"
+      - name: "to"
+        in: "query"
+        description: "Date to, defaults to current date."
+        required: false
+        type: "string"
+        format: "date"
+      - name: "limit"
+        in: "query"
+        description: "Maximum number of objects returned."
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "Get all payments of given user for given installation."
+          schema:
+            $ref: "#/definitions/inline_response_200_7"
+          examples:
+            application/json: "{\n  \"payments\": [\n    {\n      \"due_date\": \"\
+              2016-03-29 00:00:00\",\n      \"currency\": \"CZK\",\n      \"amount\"\
+              : 1196,\n      \"amount_paid\": 0,\n      \"status\": \"UNPAID_OVERDUE\"\
+              ,\n      \"issue_date\": \"2016-03-15 00:00:00\",\n      \"period\"\
+              : {\n        \"from\": \"2016-01-31 23:00:00\",\n        \"to\": \"\
+              2016-02-29 22:59:59\"\n      },\n      \"document_number\": 9106643441\n\
+              \    },\n    {\n      \"due_date\": \"2016-03-02 00:00:00\",\n     \
+              \ \"currency\": \"CZK\",\n      \"amount\": 1448,\n      \"amount_paid\"\
+              : 1448,\n      \"status\": \"PAID\",\n      \"issue_date\": \"2016-02-17\
+              \ 00:00:00\",\n      \"period\": {\n        \"from\": \"2015-12-31 23:00:00\"\
+              ,\n        \"to\": \"2016-01-31 22:59:59\"\n      },\n      \"document_number\"\
+              : 9106391495\n    }\n  ]\n}"
+        404:
+          description: "No invoices found, ERR_NO_DATA_FOUND error returned. Given\
+            \ installation hasn't been invoiced yet."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_TOKEN_PARSE ERR_INVALID_PARAMETERS ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /address/auto-complete:
+    get:
+      description: "Variation of address for given parameters"
+      operationId: "addressAuto_completeGET"
+      parameters:
+      - name: "zip_code"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "city"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "city_part"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Variation of address for given parameters"
+          schema:
+            $ref: "#/definitions/inline_response_200_8"
+        404:
+          description: "No data found, ERR_NO_DATA_FOUND error returned."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /hdo/{region}/{code}:
+    get:
+      description: "Get HDO times"
+      operationId: "hdoRegionCodeGET"
+      parameters:
+      - name: "region"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "code"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "date"
+        in: "query"
+        required: false
+        type: "string"
+        default: "current date"
+      responses:
+        200:
+          description: "HDO times"
+          schema:
+            $ref: "#/definitions/Hdo"
+        404:
+          description: "No data found, ERR_NO_DATA_FOUND error returned."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /validation/address:
+    get:
+      description: "Get address validation rules."
+      operationId: "validationAddressGET"
+      parameters: []
+      responses:
+        200:
+          description: "Validation rules."
+          schema:
+            $ref: "#/definitions/inline_response_200_9"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /validation/contacts:
+    get:
+      description: "Get contacts validation rules."
+      operationId: "validationContactsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Validation rules."
+          schema:
+            $ref: "#/definitions/inline_response_200_10"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /validation/pre-payment:
+    get:
+      description: "Get pre-payment validation rules."
+      operationId: "validationPre_paymentGET"
+      parameters: []
+      responses:
+        200:
+          description: "Validation rules."
+          schema:
+            $ref: "#/definitions/inline_response_200_11"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /validation/meter-reading:
+    get:
+      description: "Get meter reading validation rules."
+      operationId: "validationMeter_readingGET"
+      parameters: []
+      responses:
+        200:
+          description: "Validation rules."
+          schema:
+            $ref: "#/definitions/inline_response_200_12"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+securityDefinitions:
+  Oauth2Code:
+    description: "[CZ] Oauth2 autentizace pomocí přístupového tokenu.\n\n[EN] Oauth2\
+      \ autentization with access token.\n"
+    type: "oauth2"
+    authorizationUrl: "https://login-test.eon.cz/oauth2/authorize"
+    tokenUrl: "https://login-test.eon.cz/oauth2/token"
+    flow: "accessCode"
+    scopes:
+      openid: "all authorizarion"
+  Oauth2Password:
+    description: "[CZ] Oauth2 autentizace pomocí přístupového tokenu.\n\n[EN] Oauth2\
+      \ autentization with access token.\n"
+    type: "oauth2"
+    tokenUrl: "https://login-test.eon.cz/oauth2/token"
+    flow: "password"
+    scopes:
+      openid: "all authorizarion"
+definitions:
+  Address:
+    type: "object"
+    properties:
+      zip_code:
+        type: "string"
+        maxLength: 6
+      city:
+        type: "string"
+      city_part:
+        type: "string"
+      street:
+        type: "string"
+      house_number:
+        type: "string"
+      orientation_number:
+        type: "string"
+  Link:
+    type: "object"
+    required:
+    - "href"
+    - "rel"
+    properties:
+      rel:
+        type: "string"
+        enum:
+        - "invoices"
+        - "pre-payments"
+        - "payments"
+        - "partner"
+        - "contract"
+        - "consumption"
+        - "bank"
+        - "next"
+        - "hdo-times"
+        - "online-payment"
+        - "edit-address"
+        - "edit-mobile"
+        - "edit-email"
+        - "edit-pre-payment"
+        - "add-meter-read"
+        - "add-ebill"
+        - "change-password"
+        - "auto_complete"
+        - "installations"
+        - "services"
+      href:
+        type: "string"
+  Installation:
+    type: "object"
+    required:
+    - "address"
+    - "consumption_place"
+    - "id"
+    - "pod"
+    - "segment"
+    - "type"
+    properties:
+      id:
+        type: "integer"
+        description: "Instalation number."
+      segment:
+        type: "string"
+      consumption_place:
+        type: "integer"
+        description: "Cunsumption place number."
+      type:
+        type: "string"
+      pod:
+        type: "string"
+        description: "EAN/EIC code"
+      address:
+        $ref: "#/definitions/Address"
+      links:
+        type: "array"
+        description: "Links to payments (invoice, pre-payments), contract, partner\
+          \ and consumption.\n'rel' values:\n  - invoices\n  - pre-payments\n  - partner\n\
+          \  - contract\n  - consumption\n  - add-meter-read\n"
+        items:
+          $ref: "#/definitions/Link"
+  Service:
+    type: "object"
+    required:
+    - "code"
+    - "name"
+    - "state"
+    - "type"
+    properties:
+      code:
+        type: "string"
+        description: "Code of service."
+      name:
+        type: "string"
+        description: "Human readable name of service."
+      type:
+        type: "string"
+        enum:
+        - "PAID"
+        - "FREE"
+      state:
+        type: "string"
+      partner:
+        $ref: "#/definitions/Service_partner"
+      pod:
+        type: "string"
+        description: "EAN/EIC number. Referer to installation, present if connected\
+          \ to installation."
+      links:
+        type: "array"
+        description: "Provides list of links for retrieving further information about\
+          \ the service. 'payments' link is provided\nonly for paid service.\n'rel'\
+          \ values:\n  - contract\n  - payments\n"
+        items:
+          $ref: "#/definitions/Link"
+  Error:
+    type: "object"
+    required:
+    - "code"
+    - "error_message"
+    properties:
+      code:
+        type: "string"
+      error_message:
+        type: "string"
+      parameters:
+        type: "array"
+        description: "Name of parameters which caused this error."
+        items:
+          type: "string"
+      placeholders:
+        type: "array"
+        description: "Values returned for placeholders in translated message."
+        items:
+          $ref: "#/definitions/Error_placeholders"
+  DateRange:
+    type: "object"
+    properties:
+      from:
+        type: "string"
+        format: "date-time"
+      to:
+        type: "string"
+        format: "date-time"
+  Invoice:
+    type: "object"
+    required:
+    - "amount"
+    - "document_number"
+    - "due_date"
+    - "issue_date"
+    - "status"
+    properties:
+      due_date:
+        type: "string"
+        format: "date-time"
+      currency:
+        type: "string"
+        enum:
+        - "CZK"
+        - "EUR"
+      amount:
+        type: "number"
+        description: "Amount that customer should pay."
+      amount_paid:
+        type: "number"
+        description: "Amount that customer paied."
+      issue_date:
+        type: "string"
+        format: "date-time"
+      document_number:
+        type: "number"
+      period:
+        $ref: "#/definitions/DateRange"
+      status:
+        type: "string"
+      online_payment:
+        $ref: "#/definitions/OnlinePayment"
+  Pre-payment:
+    type: "object"
+    required:
+    - "amount"
+    - "due_date"
+    - "status"
+    properties:
+      due_date:
+        type: "string"
+        format: "date-time"
+      currency:
+        type: "string"
+        enum:
+        - "CZK"
+        - "EUR"
+      amount:
+        type: "number"
+      amount_paid:
+        type: "number"
+      status:
+        type: "string"
+      online_payment:
+        $ref: "#/definitions/OnlinePayment"
+      links:
+        type: "array"
+        description: "Links to bank account information, provided only if user's payment\
+          \ type requires bank information.\n'rel' values:\n  - bank\n"
+        items:
+          $ref: "#/definitions/Link"
+  Partner:
+    type: "object"
+    properties:
+      firstname:
+        type: "string"
+      surname:
+        type: "string"
+      mobile:
+        type: "string"
+      email:
+        type: "string"
+      edit_email:
+        type: "boolean"
+      edit_mobile:
+        type: "boolean"
+      address:
+        $ref: "#/definitions/Address"
+      links:
+        type: "array"
+        description: "Links to edit mobile and email.\n'rel' values:\n  - edit-mobil\n\
+          \  - edit-email\n"
+        items:
+          $ref: "#/definitions/Link"
+  Contract:
+    type: "object"
+    required:
+    - "installation"
+    - "segment"
+    - "technical_details"
+    properties:
+      segment:
+        type: "string"
+      product_line:
+        type: "string"
+        description: "fa"
+      product_deliveries:
+        type: "string"
+        description: "tisk"
+      price_list:
+        type: "string"
+        description: "cenik fa"
+      add_ebill:
+        type: "boolean"
+      edit_pre_payment:
+        type: "boolean"
+      edit_address:
+        type: "boolean"
+      contact_address:
+        $ref: "#/definitions/Address"
+      technical_details:
+        $ref: "#/definitions/Technical-details"
+      installation:
+        $ref: "#/definitions/Installation"
+      links:
+        type: "array"
+        description: "Links to edit contact address, pre-payments and opt-in for ebill.\n\
+          'rel' values:\n  - edit-address\n  - edit-pre-payment\n  - add-ebill\n"
+        items:
+          $ref: "#/definitions/Link"
+  Technical-details:
+    type: "object"
+    properties:
+      object_usage:
+        type: "string"
+        description: "General description of usage of object (famyli house)"
+      distribution_rate:
+        type: "string"
+        description: "Only electricity"
+      tariff:
+        type: "string"
+        description: "Only electricity"
+      phases_count:
+        type: "integer"
+        description: "Only electricity"
+      breaker:
+        type: "integer"
+        description: "Only electricity"
+      estimated_consumption:
+        type: "string"
+        description: "Only gas"
+      water:
+        type: "boolean"
+        description: "Only gas"
+      cooking:
+        type: "boolean"
+        description: "Only gas"
+      heating:
+        type: "boolean"
+        description: "Only gas"
+      technology:
+        type: "boolean"
+        description: "Only gas"
+  Consumption:
+    type: "object"
+    properties:
+      period:
+        $ref: "#/definitions/DateRange"
+      high_tariff:
+        type: "number"
+        description: "Consumed electricity in high tariff (overall consumption for\
+          \ 1 tariff installation)"
+      low_tariff:
+        type: "number"
+        description: "Consumed electricity in low tariff (only if installation has\
+          \ 2 tariffs)"
+      tariff:
+        type: "number"
+        description: "Consumed gass (only for gass commodity)."
+      unit:
+        type: "string"
+  Service-contract:
+    type: "object"
+    properties:
+      contract_from:
+        type: "string"
+        format: "date"
+      validity:
+        $ref: "#/definitions/DateRange"
+      payment_periodicity:
+        type: "string"
+        enum:
+        - "MONTHLY"
+        - "YEARLY"
+        - "QUARTERLY"
+        - "SEMIANNUALLY"
+      price:
+        type: "number"
+        description: "service fee per period (hodnota_produktu_netto)"
+      payment_method:
+        type: "string"
+        enum:
+        - "DIRECT_DEBIT"
+        - "BANK_TRANSFER"
+        - "POSTAL"
+      technical_name:
+        type: "string"
+        description: "Service name"
+      currency:
+        type: "string"
+        description: "Currency code (e.g. CZK)"
+      prolongation:
+        type: "boolean"
+        description: "Contract prolongation indicator"
+  Bank-connection:
+    type: "object"
+    properties:
+      account_number:
+        type: "number"
+      code_number:
+        type: "number"
+      country:
+        type: "string"
+  Address-autocomplete:
+    type: "object"
+    required:
+    - "city"
+    properties:
+      city:
+        type: "string"
+      city_part:
+        type: "string"
+      street:
+        type: "string"
+      links:
+        type: "array"
+        description: "Link for next action.\n'rel' values:\n  - next\n"
+        items:
+          $ref: "#/definitions/Link"
+  Hdo:
+    type: "object"
+    properties:
+      region:
+        type: "string"
+      validity:
+        $ref: "#/definitions/DateRange"
+      code:
+        type: "number"
+      command:
+        type: "string"
+      tariffs:
+        type: "array"
+        items:
+          $ref: "#/definitions/Hdo_tariffs"
+  OnlinePayment:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+      links:
+        type: "array"
+        description: "Link online payment gateway.\n'rel' values:\n  - online-payment\n"
+        items:
+          $ref: "#/definitions/Link"
+  Field:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      rules:
+        type: "array"
+        items:
+          $ref: "#/definitions/Field_rules"
+  inline_response_200:
+    properties:
+      links:
+        type: "array"
+        description: "Links to payments (invoice, pre-payments), contract, partner\
+          \ and consumption.\n'rel' values:\n  - installations\n  - services\n  -\
+          \ auto_complete\n  - change-password\n"
+        items:
+          $ref: "#/definitions/Link"
+  body:
+    type: "object"
+    properties:
+      oldPassword:
+        type: "string"
+      newPassword:
+        type: "string"
+  inline_response_500:
+    properties:
+      errors:
+        type: "array"
+        items:
+          $ref: "#/definitions/Error"
+  inline_response_200_1:
+    properties:
+      installations:
+        type: "array"
+        items:
+          $ref: "#/definitions/Installation"
+  inline_response_200_2:
+    properties:
+      payments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Invoice"
+      variable_symbol:
+        type: "string"
+        description: "This node is returned ONLY in case online payment is allowed\
+          \ for the user (ie NO auto payment type)."
+      links:
+        type: "array"
+        description: "Links to bank account information, provided only if user's payment\
+          \ type requires bank information.\n'rel' values:\n  - bank\n"
+        items:
+          $ref: "#/definitions/Link"
+  inline_response_200_3:
+    properties:
+      variable_symbol:
+        type: "number"
+      eon_bank:
+        $ref: "#/definitions/Bank-connection"
+  inline_response_200_4:
+    properties:
+      payments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Pre-payment"
+      variable_symbol:
+        type: "string"
+        description: "This node is returned ONLY in case online payment is allowed\
+          \ for the user (ie NO auto payment type)."
+      links:
+        type: "array"
+        description: "Links to bank account information, provided only if user's payment\
+          \ type requires bank information.\n'rel' values:\n  - bank\n"
+        items:
+          $ref: "#/definitions/Link"
+  body_1:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+  body_2:
+    type: "object"
+    properties:
+      mobile:
+        type: "string"
+  body_3:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        format: "date"
+      amount:
+        type: "number"
+  body_4:
+    type: "object"
+    properties:
+      email:
+        type: "array"
+        items:
+          type: "string"
+  inline_response_200_5:
+    properties:
+      services:
+        type: "array"
+        items:
+          $ref: "#/definitions/Service"
+  inline_response_200_6:
+    properties:
+      consumption:
+        type: "array"
+        items:
+          $ref: "#/definitions/Consumption"
+      links:
+        type: "array"
+        description: "Link for next action.\n'rel' values:\n  - hdo-times\n"
+        items:
+          $ref: "#/definitions/Link"
+  body_5:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        format: "date"
+      high_tariff:
+        type: "number"
+      low_tariff:
+        type: "number"
+  inline_response_200_7:
+    properties:
+      payments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Invoice"
+  inline_response_200_8:
+    properties:
+      address:
+        type: "array"
+        items:
+          $ref: "#/definitions/Address-autocomplete"
+  inline_response_200_9:
+    properties:
+      fields:
+        type: "array"
+        description: "fields of Address object"
+        items:
+          $ref: "#/definitions/Field"
+  inline_response_200_10:
+    properties:
+      fields:
+        type: "array"
+        description: "Email and mobile fields."
+        items:
+          $ref: "#/definitions/Field"
+  inline_response_200_11:
+    properties:
+      fields:
+        type: "array"
+        description: "Date and amount fields."
+        items:
+          $ref: "#/definitions/Field"
+  inline_response_200_12:
+    properties:
+      fields:
+        type: "array"
+        description: "Date, high and low tariff fields."
+        items:
+          $ref: "#/definitions/Field"
+  Service_partner:
+    properties:
+      firstname:
+        type: "string"
+      surname:
+        type: "string"
+      id:
+        type: "number"
+    description: "Present if service is conneted to partner."
+  Error_placeholders:
+    properties:
+      name:
+        type: "string"
+      type:
+        type: "string"
+      value:
+        type: "string"
+  Hdo_times:
+    properties:
+      days:
+        type: "string"
+      ranges:
+        type: "array"
+        items:
+          $ref: "#/definitions/DateRange"
+  Hdo_tariffs:
+    properties:
+      name:
+        type: "string"
+      times:
+        type: "array"
+        items:
+          $ref: "#/definitions/Hdo_times"
+  Field_rules:
+    properties:
+      operation:
+        type: "string"
+      args:
+        type: "object"
+        properties: {}

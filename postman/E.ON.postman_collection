@@ -1,0 +1,524 @@
+{
+	"variables": [],
+	"info": {
+		"name": "E.ON",
+		"_postman_id": "2db58b65-2862-4b7e-4951-268fb99f4152",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "OAUTH/token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"authorization\", \"Bearer \" + jsonData.access_token);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url_oauth}}token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "scope",
+							"value": "openid",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "OAUTH - links",
+			"request": {
+				"url": "{{url_oauth}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "OAUTH/userinfo",
+			"request": {
+				"url": "{{url_oauth}}userinfo?schema=openid",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API - links",
+			"request": {
+				"url": "{{url_api}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/installations",
+			"request": {
+				"url": "{{url_api}}installations",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/services",
+			"request": {
+				"url": "{{url_api}}services",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/services/SERVIS_PLUS/technical-information",
+			"request": {
+				"url": "{{url_api}}services/SERVIS_PLUS/technical-information?contract_number=2020002746",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/payments/detail/invoices",
+			"request": {
+				"url": "{{url_api}}payments/detail/invoices?installation=4500317250",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/payments/detail/services",
+			"request": {
+				"url": "{{url_api}}payments/detail/services?contract_number=2020002746",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/payments/detail/bbp = prepayments",
+			"request": {
+				"url": "{{url_api}}payments/detail/bbp?installation=4500317250",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/payments/detail/bbp/bank",
+			"request": {
+				"url": "{{url_api}}payments/detail/bbp/bank?variable_symbol=006350022027",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/partners",
+			"request": {
+				"url": "{{url_api}}partners/5500091174",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/contracts/commodity",
+			"request": {
+				"url": "{{url_api}}contracts/commodity?pod=859182400102646743",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/contracts/services",
+			"request": {
+				"url": "{{url_api}}contracts/services/2020002746",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/installations/<id>/consumption",
+			"request": {
+				"url": "{{url_api}}installations/4500317250/consumption",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/validation/ebill",
+			"request": {
+				"url": "{{url_api}}validation/ebill?installation=4500317250",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/validation/meter-reading",
+			"request": {
+				"url": "{{url_api}}validation/meter-reading?installation=4500317250",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/validation/pre-payment",
+			"request": {
+				"url": "{{url_api}}validation/pre-payment?installation=4500317250",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/validation/simulation-check",
+			"request": {
+				"url": "{{url_api}}validation/simulation-check?installation=4500317250",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/contacts/retail-offices",
+			"request": {
+				"url": "{{url_api}}contacts/retail-offices",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/contacts/addresses",
+			"request": {
+				"url": "{{url_api}}contacts/addresses",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/outages",
+			"request": {
+				"url": "{{url_api}}outages?pod=859182400102646743",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/error-messages/list",
+			"request": {
+				"url": "{{url_api}}error-messages/list?language=CZE",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/address/auto-complete step 1",
+			"request": {
+				"url": "{{url_api}}address/auto-complete?zip_code=11000",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/address/auto-complete step 2",
+			"request": {
+				"url": "{{url_api}}address/auto-complete?zip_code=11000&city=Praha",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/address/auto-complete step 3",
+			"request": {
+				"url": "{{url_api}}address/auto-complete?zip_code=11000&city=Praha&city_part=Staré Město",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "API/contracts/commodity/address",
+			"request": {
+				"url": "{{url_api}}contracts/commodity/address?installation=4500317250",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"zip_code\": 111,\n\t\"city\": \"haleluja\",\n\t\"city_part\": \"foo\",\n\t\"street\": \"bar\",\n\t\"house_number\": 111111111\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
