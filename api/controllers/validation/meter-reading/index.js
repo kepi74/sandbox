@@ -1,84 +1,84 @@
-var examples = {};
+const examples = {};
 examples['application/json'] = {
-  "links": [
+  links: [
     {
-      "rel": "submit-meter-read",
-      "href": "/installations/4500317250/meters"
-    }
+      rel: 'submit-meter-read',
+      href: '/installations/4500317250/meters',
+    },
   ],
-  "meter_number": 7212483,
-  "last_meter_reading": {
-    "low_tariff": 108778,
-    "date": "2016-12-07",
-    "units": "kWh",
-    "high_tariff": 19400
+  meter_number: 7212483,
+  last_meter_reading: {
+    low_tariff: 108778,
+    date: '2016-12-07',
+    units: 'kWh',
+    high_tariff: 19400,
   },
-  "fields": [
+  fields: [
     {
-      "default": "2017-04-12",
-      "name": "date",
-      "rules": [
+      default: '2017-04-12',
+      name: 'date',
+      rules: [
         {
-          "operation": "required",
-          "code": "ERR_FIELD_REQUIRED"
+          operation: 'required',
+          code: 'ERR_FIELD_REQUIRED',
         },
         {
-          "operation": "date",
-          "pattern": "^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$",
-          "code": "ERR_FIELD_DATE"
+          operation: 'date',
+          pattern: '^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$',
+          code: 'ERR_FIELD_DATE',
         },
         {
-          "operation": "date_in_range",
-          "args": [
-            "2017-03-28",
-            "2017-04-12"
+          operation: 'date_in_range',
+          args: [
+            '2017-03-28',
+            '2017-04-12',
           ],
-          "code": "ERR_FIELD_DATE_IN_RANGE"
-        }
-      ]
+          code: 'ERR_FIELD_DATE_IN_RANGE',
+        },
+      ],
     },
     {
-      "default": 19401,
-      "name": "high_tariff",
-      "rules": [
+      default: 19401,
+      name: 'high_tariff',
+      rules: [
         {
-          "operation": "required",
-          "code": "ERR_FIELD_REQUIRED"
+          operation: 'required',
+          code: 'ERR_FIELD_REQUIRED',
         },
         {
-          "operation": "numeric",
-          "args": [
+          operation: 'numeric',
+          args: [
             19401,
             null,
-            999999
+            999999,
           ],
-          "code": "ERR_FIELD_NUMERIC"
-        }
-      ]
+          code: 'ERR_FIELD_NUMERIC',
+        },
+      ],
     },
     {
-      "default": 108779,
-      "name": "low_tariff",
-      "rules": [
+      default: 108779,
+      name: 'low_tariff',
+      rules: [
         {
-          "operation": "required",
-          "code": "ERR_FIELD_REQUIRED"
+          operation: 'required',
+          code: 'ERR_FIELD_REQUIRED',
         },
         {
-          "operation": "numeric",
-          "args": [
+          operation: 'numeric',
+          args: [
             108779,
             null,
-            999999
+            999999,
           ],
-          "code": "ERR_FIELD_NUMERIC"
-        }
-      ]
-    }
-  ]
+          code: 'ERR_FIELD_NUMERIC',
+        },
+      ],
+    },
+  ],
 };
 
-module.exports = function(args, res, next) {
+module.exports = function (args, res, next) {
   /**
    * Get meter reading validation rules.
    *
@@ -90,5 +90,5 @@ module.exports = function(args, res, next) {
   } else {
     res.end();
   }
-}
+};
 

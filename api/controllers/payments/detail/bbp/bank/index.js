@@ -1,14 +1,14 @@
-var examples = {};
+const examples = {};
 examples['application/json'] = {
-  "variable_symbol": "006350022027",
-  "eon_bank": {
-    "account_number": "19-17608231",
-    "code_number": "0100",
-    "country": "CZ"
-  }
+  variable_symbol: '006350022027',
+  eon_bank: {
+    account_number: '19-17608231',
+    code_number: '0100',
+    country: 'CZ',
+  },
 };
 
-module.exports = function(args, res, next) {
+module.exports = function (args, res, next) {
   /**
    * Bank information
    *
@@ -21,5 +21,5 @@ module.exports = function(args, res, next) {
   } else {
     res.end();
   }
-}
+};
 

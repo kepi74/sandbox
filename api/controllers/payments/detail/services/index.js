@@ -1,39 +1,39 @@
-var examples = {};
+const examples = {};
 examples['application/json'] = {
-  "payments": [
+  payments: [
     {
-      "online_payment": {
-        "status": "NOT_POSSIBLE"
+      online_payment: {
+        status: 'NOT_POSSIBLE',
       },
-      "amount": 300,
-      "amount_paid": 300,
-      "document_number": 402000003639,
-      "status_description": "Uhrazeno",
-      "status": "PAID",
-      "print_id": 402000003639,
-      "due_date": "2016-04-15T12:50:14+0200",
-      "issue_date": "2016-04-26T12:50:14+0200",
-      "currency": "CZK"
+      amount: 300,
+      amount_paid: 300,
+      document_number: 402000003639,
+      status_description: 'Uhrazeno',
+      status: 'PAID',
+      print_id: 402000003639,
+      due_date: '2016-04-15T12:50:14+0200',
+      issue_date: '2016-04-26T12:50:14+0200',
+      currency: 'CZK',
     },
     {
-      "online_payment": {
-        "status": "NOT_POSSIBLE"
+      online_payment: {
+        status: 'NOT_POSSIBLE',
       },
-      "amount": 225,
-      "amount_paid": 225,
-      "document_number": 402000001513,
-      "status_description": "Uhrazeno",
-      "status": "PAID",
-      "print_id": 402000001513,
-      "due_date": "2015-04-15T12:50:14+0200",
-      "issue_date": "2015-04-17T12:50:14+0200",
-      "currency": "CZK"
-    }
+      amount: 225,
+      amount_paid: 225,
+      document_number: 402000001513,
+      status_description: 'Uhrazeno',
+      status: 'PAID',
+      print_id: 402000001513,
+      due_date: '2015-04-15T12:50:14+0200',
+      issue_date: '2015-04-17T12:50:14+0200',
+      currency: 'CZK',
+    },
   ],
-  "variable_symbol": "002900018370"
+  variable_symbol: '002900018370',
 };
 
-module.exports = function(args, res, next) {
+module.exports = function (args, res, next) {
   /**
    * Payment information
    *
@@ -49,5 +49,5 @@ module.exports = function(args, res, next) {
   } else {
     res.end();
   }
-}
+};
 

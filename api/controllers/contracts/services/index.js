@@ -1,27 +1,27 @@
-var examples = {};
+const examples = {};
 examples['application/json'] = {
-  "contract_from": "2015-05-01",
-  "validity": {
-    "from": "2015-05-01",
-    "to": "2016-04-30"
+  contract_from: '2015-05-01',
+  validity: {
+    from: '2015-05-01',
+    to: '2016-04-30',
   },
-  "payment_periodicity": "YEARLY",
-  "price": 225,
-  "payment_method": "BANK_TRANSFER",
-  "technical_name": "SERVIS_PLUS",
-  "currency": "CZK",
-  "prolongation": true,
-  "contact_address": {
-    "zip_code": "397 01",
-    "city": "Písek",
-    "city_part": "Budějovické Předměstí",
-    "street": "Rokycanova",
-    "house_number": 1222,
-    "orientation_number": null
-  }
+  payment_periodicity: 'YEARLY',
+  price: 225,
+  payment_method: 'BANK_TRANSFER',
+  technical_name: 'SERVIS_PLUS',
+  currency: 'CZK',
+  prolongation: true,
+  contact_address: {
+    zip_code: '397 01',
+    city: 'Písek',
+    city_part: 'Budějovické Předměstí',
+    street: 'Rokycanova',
+    house_number: 1222,
+    orientation_number: null,
+  },
 };
 
-module.exports = function(args, res, next) {
+module.exports = function (args, res, next) {
   /**
    *
    * contract_number Integer Contract identifier.
@@ -33,5 +33,5 @@ module.exports = function(args, res, next) {
   } else {
     res.end();
   }
-}
+};
 
