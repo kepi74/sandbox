@@ -148,9 +148,10 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const paymentsDetailBbp = (args, res) => {
   /**
-   * Pre-payment information. Contains list of pre-payments. If user payment type supports online payment, link to bank detail and variable symbol is provided in the response.
+   * Pre-payment information. Contains list of pre-payments. If user payment type
+   * supports online payment, link to bank detail and variable symbol is provided in the response.
    *
    * installation Integer Installation id.
    * from date Date from. (optional)
@@ -166,3 +167,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default paymentsDetailBbp;

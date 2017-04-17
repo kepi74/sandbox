@@ -1,15 +1,15 @@
-var examples = {
+const response = {
   errEditInProgress: {
     statusCode: 400,
     response: {
       errors: [
         {
           code: 'ERR_EDIT_IN_PROGRESS',
-          'error_message': 'Cannot request another change request. Request already queued today',
+          error_message: 'Cannot request another change request. Request already queued today',
           parameters: [],
-          placeholders: []
-        }
-      ]
+          placeholders: [],
+        },
+      ],
     },
   },
   errorFieldPattern: {
@@ -18,11 +18,11 @@ var examples = {
       errors: [
         {
           code: 'ERR_FIELD_PATTERN',
-          'error_message': '',
+          error_message: '',
           parameters: 'zip_code',
-          placeholders: null
-        }
-      ]
+          placeholders: null,
+        },
+      ],
     },
   },
   errorFieldRequired: {
@@ -31,11 +31,11 @@ var examples = {
       errors: [
         {
           code: 'ERR_FIELD_REQUIRED',
-          'error_message': 'Missing mandatory param',
+          error_message: 'Missing mandatory param',
           parameters: 'zip_code',
-          placeholders: null
-        }
-      ]
+          placeholders: null,
+        },
+      ],
     },
   },
   // TODO: Report invalid funkcionality of endpoint ERR_FIELD_LENGTH
@@ -44,11 +44,11 @@ var examples = {
       errors: [
         {
           code: 'ERR_FIELD_LENGTH',
-          'error_message': '',
+          error_message: '',
           parameters: '',
-          placeholders: null
-        }
-      ]
+          placeholders: null,
+        },
+      ],
     },
   },
   // TODO: Report invalid funkcionality of endpoint ERR_NOT_FOUND_PSC
@@ -57,11 +57,11 @@ var examples = {
       errors: [
         {
           code: 'ERR_NOT_FOUND_PSC',
-          'error_message': 'Missing mandatory param',
+          error_message: 'Missing mandatory param',
           parameters: 'zip_code',
-          placeholders: null
-        }
-      ]
+          placeholders: null,
+        },
+      ],
     },
   },
   errorUserInput: {
@@ -70,12 +70,12 @@ var examples = {
       errors: [
         {
           code: 'ERR_USER_INPUT',
-          'error_message': 'Invalid ZIP code',
+          error_message: 'Invalid ZIP code',
           parameters: 'zip_code',
-          placeholders: []
-        }
-      ]
-    }
+          placeholders: [],
+        },
+      ],
+    },
   },
   success: {
     statusCode: 202,
@@ -83,7 +83,7 @@ var examples = {
   },
 };
 
-zipCodes = {};
+const zipCodes = {};
 zipCodes['00000'] = '500';
 zipCodes['00001'] = '404';
 zipCodes['00003'] = '403';
@@ -93,9 +93,9 @@ zipCodes['10002'] = response.errorNotFoundPSC;
 zipCodes['10003'] = response.errorFieldRequired;
 zipCodes['10004'] = response.errorFieldPattern;
 
-houseNumberCodes = {};
+const houseNumberCodes = {};
 
-function(args, res, next) {
+const contractsCommodityAddress = (args, res) => {
   /**
    * Changes the contact address.
    *
@@ -104,10 +104,7 @@ function(args, res, next) {
    * no response value expected for this operation
    **/
   res.setHeader('Content-Type', 'application/json');
-  switch (args.house_number.value) {
-    case CODES_ERR_EDIT_IN_PROGRESS:
-      res.end(JSON.stringify(examples.errEditInProgress || {}, null, 2));
-  }
   res.end();
-}
+};
 
+export default contractsCommodityAddress;

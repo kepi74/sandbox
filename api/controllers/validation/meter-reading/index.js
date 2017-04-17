@@ -78,7 +78,7 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const validationMeterReading = (args, res) => {
   /**
    * Get meter reading validation rules.
    *
@@ -92,3 +92,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default validationMeterReading;

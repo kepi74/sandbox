@@ -52,7 +52,7 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const installations = (args, res) => {
   /**
    * Basic endpont for household information.
    *
@@ -66,3 +66,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default installations;

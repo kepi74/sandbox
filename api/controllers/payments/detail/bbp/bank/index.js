@@ -8,7 +8,7 @@ examples['application/json'] = {
   },
 };
 
-module.exports = function (args, res, next) {
+const paymentsDetailBbpBank = (args, res) => {
   /**
    * Bank information
    *
@@ -23,3 +23,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default paymentsDetailBbpBank;

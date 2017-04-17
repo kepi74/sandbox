@@ -50,7 +50,7 @@ const response = {
     );
     res.end(JSON.stringify(
       {
-        text: '<!DOCTYPE html><!-- \"\' --></script></style></noscript></xmp>\n<meta charset=\"utf-8\">\n<meta name=\"robots\" content=\"noindex\">\n<title>Server Error</title>\n\n<style>\n\t#error-body { background: white; width: 500px; margin: 70px auto; padding: 10px 20px }\n\t#error-body h1 { font: bold 47px/1.5 sans-serif; background: none; color: #333; margin: .6em 0 }\n\t#error-body p { font: 21px/1.5 Georgia,serif; background: none; color: #333; margin: 1.5em 0 }\n\t#error-body small { font-size: 70%; color: gray }\n</style>\n\n<div id=\"error-body\">\n\t<h1>Server Error</h1>\n\n\t<p>We\'re sorry! The server encountered an internal error and\n\twas unable to complete your request. Please try again later.</p>\n\n\t<p><small>error 500</small></p>\n</div>\n',
+        text: '<!DOCTYPE html><!-- "\' --></script></style></noscript></xmp>\n<meta charset="utf-8">\n<meta name="robots" content="noindex">\n<title>Server Error</title>\n\n<style>\n\t#error-body { background: white; width: 500px; margin: 70px auto; padding: 10px 20px }\n\t#error-body h1 { font: bold 47px/1.5 sans-serif; background: none; color: #333; margin: .6em 0 }\n\t#error-body p { font: 21px/1.5 Georgia,serif; background: none; color: #333; margin: 1.5em 0 }\n\t#error-body small { font-size: 70%; color: gray }\n</style>\n\n<div id="error-body">\n\t<h1>Server Error</h1>\n\n\t<p>We\'re sorry! The server encountered an internal error and\n\twas unable to complete your request. Please try again later.</p>\n\n\t<p><small>error 500</small></p>\n</div>\n',
       },
       null,
       2,

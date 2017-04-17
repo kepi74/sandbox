@@ -33,7 +33,7 @@ examples['application/json'] = {
   variable_symbol: '002900018370',
 };
 
-module.exports = function (args, res, next) {
+const paymentsDetailServices = (args, res) => {
   /**
    * Payment information
    *
@@ -51,3 +51,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default paymentsDetailServices;

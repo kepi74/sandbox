@@ -17,7 +17,7 @@ examples['application/json'] = {
   id: 5500091174,
 };
 
-module.exports = function (args, res, next) {
+const partners = (args, res) => {
   /**
    *
    * id Integer Id of business partner.
@@ -31,3 +31,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default partners;

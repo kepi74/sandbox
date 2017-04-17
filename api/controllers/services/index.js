@@ -208,7 +208,7 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const services = (args, res) => {
   /**
    *
    * status String Service statuses to filter the list by (CSV format) (optional)
@@ -222,3 +222,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default services;

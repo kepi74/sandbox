@@ -21,7 +21,7 @@ examples['application/json'] = {
   },
 };
 
-module.exports = function (args, res, next) {
+const contractsServices = (args, res) => {
   /**
    *
    * contract_number Integer Contract identifier.
@@ -35,3 +35,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default contractsServices;

@@ -94,9 +94,13 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const consumption = (args, res) => {
   /**
-   * Returns consumption data for given installation. Electricity values are separated into high ('high_tariff') and low tariff ('low_tariff'). Low tariff is ommited if installation contract is for single tariff only. Gass consumption uses only one tariff ('tariff'). By default consumption data are limited to start and end of the contract.
+   * Returns consumption data for given installation. Electricity values are separated
+   * into high ('high_tariff') and low tariff ('low_tariff'). Low tariff is ommited
+   * if installation contract is for single tariff only. Gass consumption uses only
+   * one tariff ('tariff'). By default consumption data are limited to start
+   * and end of the contract.
    *
    * id Integer Installation identifier
    * from String  (optional)
@@ -111,3 +115,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default consumption;

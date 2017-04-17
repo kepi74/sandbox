@@ -7,7 +7,7 @@ exports.addressAuto_completeGET = require('./address/auto-complete');
 exports.contractsCommodityAddressPOST = require('./contracts/commodity/address');
 // TODO: success
 // TODO: errors
-exports.contractsCommodityBbpPOST = function (args, res, next) {
+exports.contractsCommodityBbpPOST = (args, res) => {
   /**
    * Changes pre-payment amount.
    *
@@ -20,7 +20,7 @@ exports.contractsCommodityBbpPOST = function (args, res, next) {
 
 // TODO: success
 // TODO: errors
-exports.contractsCommodityEbillPOST = function (args, res, next) {
+exports.contractsCommodityEbillPOST = (args, res) => {
   /**
    * Ebill activation.
    *
@@ -36,7 +36,7 @@ exports.contractsCommodityGET = require('./contracts/commodity');
 exports.contractsServicesContract_numberGET = require('./contracts/services');
 
 // TODO: response
-exports.hdoRegionCodeGET = function (args, res, next) {
+exports.hdoRegionCodeGET = (args, res) => {
   /**
    * Get HDO times
    *
@@ -76,7 +76,7 @@ exports.installationsIdConsumptionGET = require('./installations/consumption');
 
 // TODO: success
 // TODO: errors
-exports.installationsIdMetersPOST = function (args, res, next) {
+exports.installationsIdMetersPOST = (args, res) => {
   /**
    * Submit meter read.
    *
@@ -90,7 +90,7 @@ exports.installationsIdMetersPOST = function (args, res, next) {
 
 // TODO: success
 // TODO: errors
-exports.partnersIdEmailPOST = function (args, res, next) {
+exports.partnersIdEmailPOST = (args, res) => {
   /**
    * Changes email address.
    *
@@ -105,7 +105,7 @@ exports.partnersIdGET = require('./partners');
 
 // TODO: success
 // TODO: errors
-exports.partnersIdMobilePOST = function (args, res, next) {
+exports.partnersIdMobilePOST = (args, res) => {
   /**
    * Changes mobile number.
    *
@@ -121,7 +121,7 @@ exports.paymentsDetailBbpBankGET = require('./payments/detail/bbp/bank');
 exports.paymentsDetailBbpGET = require('./payments/detail/bbp');
 
 // TODO: response
-exports.paymentsDetailInvoicesBankGET = function (args, res, next) {
+exports.paymentsDetailInvoicesBankGET = (args, res) => {
   /**
    * Bank information
    *
@@ -148,7 +148,7 @@ exports.servicesGET = require('./services');
 
 // TODO: success
 // TODO: errors
-exports.usersChange_passwordPOST = function (args, res, next) {
+exports.usersChange_passwordPOST = (args, res) => {
   /**
    * Changes user password.
    *
@@ -159,7 +159,7 @@ exports.usersChange_passwordPOST = function (args, res, next) {
 };
 
 // TODO: response
-exports.validationAddressGET = function (args, res, next) {
+exports.validationAddressGET = (args, res) => {
   /**
    * Get address validation rules.
    *
@@ -184,7 +184,7 @@ exports.validationAddressGET = function (args, res, next) {
 };
 
 // TODO: response
-exports.validationContactsGET = function (args, res, next) {
+exports.validationContactsGET = (args, res) => {
   /**
    * Get contacts validation rules.
    *

@@ -152,7 +152,7 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const paymentsDetailInvoices = (args, res) => {
   /**
    * Payment information.
    *
@@ -170,3 +170,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default paymentsDetailInvoices;

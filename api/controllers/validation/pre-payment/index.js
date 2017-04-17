@@ -45,7 +45,7 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const validationPrePayment = (args, res) => {
   /**
    * Get pre-payment validation rules.
    *
@@ -59,3 +59,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default validationPrePayment;

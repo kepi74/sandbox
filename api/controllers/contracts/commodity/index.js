@@ -78,7 +78,7 @@ examples['application/json'] = {
   ],
 };
 
-module.exports = function (args, res, next) {
+const contractsCommodity = (args, res) => {
   /**
    *
    * pod Integer Pod id (EAN/EIC).
@@ -92,3 +92,4 @@ module.exports = function (args, res, next) {
   }
 };
 
+export default contractsCommodity;
