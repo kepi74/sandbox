@@ -86,18 +86,7 @@ export const installationsIdMetersPOST = (args, res) => {
   res.end();
 };
 
-// TODO: success
-// TODO: errors
-export const partnersIdEmailPOST = (args, res) => {
-  /**
-   * Changes email address.
-   *
-   * id Integer Id of business partner.
-   * body Body_1 New contact address.
-   * no response value expected for this operation
-   **/
-  res.end();
-};
+export { default as partnersIdEmailPOST } from './partners/email';
 
 export { default as partnersIdGET } from './partners';
 
