@@ -1,13 +1,11 @@
+/* eslint-disable camelcase */
 
+export { default as addressAuto_completeGET } from './address/auto-complete';
 
-exports.addressAuto_completeGET = require('./address/auto-complete');
-
+export { default as contractsCommodityAddressPOST } from './contracts/commodity/address';
 // TODO: success
 // TODO: errors
-exports.contractsCommodityAddressPOST = require('./contracts/commodity/address');
-// TODO: success
-// TODO: errors
-exports.contractsCommodityBbpPOST = (args, res) => {
+export const contractsCommodityBbpPOST = (args, res) => {
   /**
    * Changes pre-payment amount.
    *
@@ -20,7 +18,7 @@ exports.contractsCommodityBbpPOST = (args, res) => {
 
 // TODO: success
 // TODO: errors
-exports.contractsCommodityEbillPOST = (args, res) => {
+export const contractsCommodityEbillPOST = (args, res) => {
   /**
    * Ebill activation.
    *
@@ -31,12 +29,12 @@ exports.contractsCommodityEbillPOST = (args, res) => {
   res.end();
 };
 
-exports.contractsCommodityGET = require('./contracts/commodity');
+export { default as contractsCommodityGET } from './contracts/commodity';
 
-exports.contractsServicesContract_numberGET = require('./contracts/services');
+export { default as contractsServicesContract_numberGET } from './contracts/services';
 
 // TODO: response
-exports.hdoRegionCodeGET = (args, res) => {
+export const hdoRegionCodeGET = (args, res) => {
   /**
    * Get HDO times
    *
@@ -70,13 +68,13 @@ exports.hdoRegionCodeGET = (args, res) => {
   }
 };
 
-exports.installationsGET = require('./installations');
+export { default as installationsGET } from './installations';
 
-exports.installationsIdConsumptionGET = require('./installations/consumption');
+export { default as installationsIdConsumptionGET } from './installations/consumption';
 
 // TODO: success
 // TODO: errors
-exports.installationsIdMetersPOST = (args, res) => {
+export const installationsIdMetersPOST = (args, res) => {
   /**
    * Submit meter read.
    *
@@ -90,7 +88,7 @@ exports.installationsIdMetersPOST = (args, res) => {
 
 // TODO: success
 // TODO: errors
-exports.partnersIdEmailPOST = (args, res) => {
+export const partnersIdEmailPOST = (args, res) => {
   /**
    * Changes email address.
    *
@@ -101,11 +99,11 @@ exports.partnersIdEmailPOST = (args, res) => {
   res.end();
 };
 
-exports.partnersIdGET = require('./partners');
+export { default as partnersIdGET } from './partners';
 
 // TODO: success
 // TODO: errors
-exports.partnersIdMobilePOST = (args, res) => {
+export const partnersIdMobilePOST = (args, res) => {
   /**
    * Changes mobile number.
    *
