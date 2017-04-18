@@ -160,6 +160,23 @@ const response = {
       2,
     ));
   },
+  errorInputLow: (field = 'high_tariff', placeholders = '21721') => (res) => {
+    res.writeHead(400, { 'Content-type': 'application/json' });
+    res.end(JSON.stringify(
+      {
+        errors: [
+          {
+            code: 'ERR_INPUT_LOW',
+            error_message: '',
+            parameters: field,
+            placeholders,
+          },
+        ],
+      },
+      null,
+      2,
+    ));
+  },
   success: (res) => {
     res.writeHead(202, { 'Content-type': 'application/json' });
     res.end(JSON.stringify(
@@ -181,6 +198,7 @@ highCodes['1006'] = response.errorFieldNumberMin('high_tariff', '19401');
 highCodes['1007'] = response.errorFieldNumberLength('high_tariff', '19401');
 highCodes['1008'] = response.errorFieldNumberNotPlausible('high_tariff', '19401');
 highCodes['1009'] = response.errorReadingError;
+highCodes['1010'] = response.errorInputLow('high_tariff', '21721');
 
 const lowCodes = {};
 lowCodes['1000'] = response.errorFieldRequired('low_tariff', '108779');
@@ -189,6 +207,7 @@ lowCodes['1002'] = response.errorFieldNumber('low_tariff', '108779');
 lowCodes['1003'] = response.errorFieldNumberMin('low_tariff', '108779');
 lowCodes['1004'] = response.errorFieldNumberLength('low_tariff', '108779');
 lowCodes['1005'] = response.errorFieldNotPlausible('low_tariff', '108779');
+lowCodes['1006'] = response.errorInputLow('low_tariff', '122223');
 
 const installationsMeters = (args, res) => {
   /**
