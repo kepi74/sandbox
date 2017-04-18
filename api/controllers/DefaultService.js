@@ -92,9 +92,9 @@ export { default as partnersIdGET } from './partners';
 
 export { default as partnersIdMobilePOST } from './partners/mobile';
 
-exports.paymentsDetailBbpBankGET = require('./payments/detail/bbp/bank');
+export { default as paymentsDetailBbpBankGET } from './payments/detail/bbp/bank';
 
-exports.paymentsDetailBbpGET = require('./payments/detail/bbp');
+export { default as paymentsDetailBbpGET } from './payments/detail/bbp';
 
 // TODO: response
 exports.paymentsDetailInvoicesBankGET = (args, res) => {
@@ -114,13 +114,13 @@ exports.paymentsDetailInvoicesBankGET = (args, res) => {
   }
 };
 
-exports.paymentsDetailInvoicesGET = require('./payments/detail/invoices');
+export { default as paymentsDetailInvoicesGET } from './payments/detail/invoices';
 
-exports.paymentsDetailServicesGET = require('./payments/detail/services');
+export { default as paymentsDetailServicesGET } from './payments/detail/services';
 
-exports.rootGET = require('./root');
+export { default as rootGET } from './root';
 
-exports.servicesGET = require('./services');
+export { default as servicesGET } from './services';
 
 // TODO: success
 // TODO: errors
@@ -184,6 +184,6 @@ exports.validationContactsGET = (args, res) => {
   }
 };
 
-exports.validationMeter_readingGET = require('./validation/meter-reading');
+export { default as validationMeter_readingGET } from './validation/meter-reading';
 
-exports.validationPre_paymentGET = require('./validation/pre-payment');
+export { default as validationPre_paymentGET } from './validation/pre-payment';
