@@ -645,7 +645,7 @@ examples['404'] = {
 const addressAutoComplete = (args, res) => {
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
-    if (args.zip_code.value === '00000' || !args.zip_code.value) {
+    if (args.zip_code.value === '404' || !args.zip_code.value) {
       res.statusCode = 404;
       res.end(JSON.stringify(examples['404'] || {}, null, 2));
     }
