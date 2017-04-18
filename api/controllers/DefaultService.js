@@ -90,18 +90,7 @@ export { default as partnersIdEmailPOST } from './partners/email';
 
 export { default as partnersIdGET } from './partners';
 
-// TODO: success
-// TODO: errors
-export const partnersIdMobilePOST = (args, res) => {
-  /**
-   * Changes mobile number.
-   *
-   * id Integer Id of business partner.
-   * body Body_2 New mobile number.
-   * no response value expected for this operation
-   **/
-  res.end();
-};
+export { default as partnersIdMobilePOST } from './partners/mobile';
 
 exports.paymentsDetailBbpBankGET = require('./payments/detail/bbp/bank');
 
