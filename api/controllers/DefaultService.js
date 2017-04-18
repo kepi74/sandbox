@@ -72,19 +72,7 @@ export { default as installationsGET } from './installations';
 
 export { default as installationsIdConsumptionGET } from './installations/consumption';
 
-// TODO: success
-// TODO: errors
-export const installationsIdMetersPOST = (args, res) => {
-  /**
-   * Submit meter read.
-   *
-   * serial_number Integer Meter id.
-   * id Integer Installation identifier
-   * body Body_5 Meter read values.
-   * no response value expected for this operation
-   **/
-  res.end();
-};
+export { default as installationsIdMetersPOST } from './installations/meters';
 
 export { default as partnersIdEmailPOST } from './partners/email';
 
