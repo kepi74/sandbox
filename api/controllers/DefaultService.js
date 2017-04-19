@@ -3,31 +3,10 @@
 export { default as addressAuto_completeGET } from './address/auto-complete';
 
 export { default as contractsCommodityAddressPOST } from './contracts/commodity/address';
-// TODO: success
-// TODO: errors
-export const contractsCommodityBbpPOST = (args, res) => {
-  /**
-   * Changes pre-payment amount.
-   *
-   * installation Integer Installation id.
-   * body Body_3 New pre-payment amount and date from which it should be changed.
-   * no response value expected for this operation
-   **/
-  res.end();
-};
 
-// TODO: success
-// TODO: errors
-export const contractsCommodityEbillPOST = (args, res) => {
-  /**
-   * Ebill activation.
-   *
-   * installation Integer Installation id.
-   * body Body_4 Ebill email address.
-   * no response value expected for this operation
-   **/
-  res.end();
-};
+export { default as contractsCommodityBbpPOST } from './contracts/commodity/bbp';
+
+export { default as contractsCommodityEbillPOST } from './contracts/commodity/ebill';
 
 export { default as contractsCommodityGET } from './contracts/commodity';
 
@@ -73,6 +52,8 @@ export { default as installationsGET } from './installations';
 export { default as installationsIdConsumptionGET } from './installations/consumption';
 
 export { default as installationsIdMetersPOST } from './installations/meters';
+
+export { default as installationsIdSimulationPOST } from './installations/simulation';
 
 export { default as partnersIdEmailPOST } from './partners/email';
 
@@ -175,3 +156,5 @@ exports.validationContactsGET = (args, res) => {
 export { default as validationMeter_readingGET } from './validation/meter-reading';
 
 export { default as validationPre_paymentGET } from './validation/pre-payment';
+
+export { default as validationSimulation_checkGET } from './validation/simulation-check';

@@ -41,6 +41,10 @@ export const installationsIdMetersPOST = (req, res, next) => {
   Default.installationsIdMetersPOST(req.swagger.params, res, next);
 };
 
+export const installationsIdSimulationPOST = (req, res, next) => {
+  Default.installationsIdSimulationPOST(req.swagger.params, res, next);
+};
+
 export const partnersIdEmailPOST = (req, res, next) => {
   Default.partnersIdEmailPOST(req.swagger.params, res, next);
 };
@@ -99,6 +103,10 @@ export const validationMeter_readingGET = (req, res, next) => {
 
 export const validationPre_paymentGET = (req, res, next) => {
   Default.validationPre_paymentGET(req.swagger.params, res, next);
+};
+
+export const validationSimulation_checkGET = (req, res, next) => {
+  Default.validationSimulation_checkGET(req.swagger.params, res, next);
 };
 
 /* eslint-enable */

@@ -634,6 +634,36 @@ paths:
           schema:
             $ref: "#/definitions/inline_response_500"
       x-swagger-router-controller: "Default"
+  /installations/{id}/simulation:
+    post:
+      description: "Submit invoice simulation."
+      operationId: "installationsIdSimulationPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Installation identifier"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        description: "Meter read values."
+        required: true
+        schema:
+          $ref: "#/definitions/body_5"
+      responses:
+        202:
+          description: "Request was validated and strored in queue."
+        400:
+          description: "Validation error."
+          schema:
+            $ref: "#/definitions/inline_response_500"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
   /payments/detail/services:
     get:
       description: "Payment information"
@@ -803,6 +833,25 @@ paths:
       description: "Get meter reading validation rules."
       operationId: "validationMeter_readingGET"
       parameters: []
+      responses:
+        200:
+          description: "Validation rules."
+          schema:
+            $ref: "#/definitions/inline_response_200_12"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
+  /validation/simulation-check:
+    get:
+      description: "Get invoice simulation validation rules."
+      operationId: "validationSimulation_checkGET"
+      parameters:
+      - name: "installation"
+        in: "query"
+        required: true
+        type: "string"
       responses:
         200:
           description: "Validation rules."
