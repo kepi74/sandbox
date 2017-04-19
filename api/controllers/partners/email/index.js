@@ -98,11 +98,15 @@ const response = {
 };
 
 const emailCodes = { ...standardResponses };
-emailCodes['1000'] = response.errorFieldRequired;
-emailCodes['1001'] = response.errorFieldPattern;
-emailCodes['1002'] = response.errorFieldEmail;
-emailCodes['1003'] = response.errorFieldMaxLength;
-emailCodes['1004'] = response.errorEditInProgress;
+emailCodes['401@test.loc'] = standardResponses['401'];
+emailCodes['403@test.loc'] = standardResponses['403'];
+emailCodes['404@test.loc'] = standardResponses['404'];
+emailCodes['500@test.loc'] = standardResponses['500'];
+emailCodes['1000@test.loc'] = response.errorFieldRequired;
+emailCodes['1001@test.loc'] = response.errorFieldPattern;
+emailCodes['1002@test.loc'] = response.errorFieldEmail;
+emailCodes['1003@test.loc'] = response.errorFieldMaxLength;
+emailCodes['1004@test.loc'] = response.errorEditInProgress;
 
 const partnersEmail = (args, res) => {
   /**

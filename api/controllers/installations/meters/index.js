@@ -125,7 +125,7 @@ const response = {
     ));
   },
   // TODO: not implemented on API?
-  errorFieldNumberNotPlausible: (field = 'high_tariff', placeholders = '19401') => (res) => {
+  errorFieldNotPlausible: (field = 'high_tariff', placeholders = '19401') => (res) => {
     res.writeHead(400, { 'Content-type': 'application/json' });
     res.end(JSON.stringify(
       {
@@ -196,7 +196,7 @@ highCodes['1004'] = response.errorFieldNumberNoZero('high_tariff', '19401');
 highCodes['1005'] = response.errorFieldNumber('high_tariff', '19401');
 highCodes['1006'] = response.errorFieldNumberMin('high_tariff', '19401');
 highCodes['1007'] = response.errorFieldNumberLength('high_tariff', '19401');
-highCodes['1008'] = response.errorFieldNumberNotPlausible('high_tariff', '19401');
+highCodes['1008'] = response.errorFieldNotPlausible('high_tariff', '19401');
 highCodes['1009'] = response.errorReadingError;
 highCodes['1010'] = response.errorInputLow('high_tariff', '21721');
 

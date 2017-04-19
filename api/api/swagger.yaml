@@ -609,7 +609,7 @@ paths:
       - name: "serial_number"
         in: "query"
         description: "Meter id."
-        required: true
+        required: false
         type: "integer"
       - name: "id"
         in: "path"
