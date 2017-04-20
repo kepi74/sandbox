@@ -109,5 +109,9 @@ export const validationSimulation_checkGET = (req, res, next) => {
   Default.validationSimulation_checkGET(req.swagger.params, res, next);
 };
 
+export const validationEbillGET = (req, res, next) => {
+  Default.validationEbillGET(req.swagger.params, res, next);
+};
+
 /* eslint-enable */
 

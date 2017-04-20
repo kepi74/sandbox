@@ -158,3 +158,5 @@ export { default as validationMeter_readingGET } from './validation/meter-readin
 export { default as validationPre_paymentGET } from './validation/pre-payment';
 
 export { default as validationSimulation_checkGET } from './validation/simulation-check';
+
+export { default as validationEbillGET } from './validation/ebill';

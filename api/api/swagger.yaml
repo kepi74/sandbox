@@ -798,6 +798,25 @@ paths:
           schema:
             $ref: "#/definitions/inline_response_500"
       x-swagger-router-controller: "Default"
+  /validation/ebill:
+    get:
+      description: "Get eBill validation rules."
+      operationId: "validationEbillGET"
+      parameters:
+      - name: "installation"
+        in: "query"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Validation rules."
+          schema:
+            $ref: "#/definitions/inline_response_200_9"
+        500:
+          description: "Backend Error - ERR_BACKEND_COMMUNICATION"
+          schema:
+            $ref: "#/definitions/inline_response_500"
+      x-swagger-router-controller: "Default"
   /validation/contacts:
     get:
       description: "Get contacts validation rules."
