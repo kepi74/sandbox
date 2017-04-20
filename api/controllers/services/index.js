@@ -133,7 +133,7 @@ examples['application/json'] = {
       id: '898083977cb5f5445d1d6eb236bd3b95',
       pod_string: '859182400102646743_',
       name: 'Elektronická faktura – E-Bill',
-      state: 'ACTIVE',
+      state: 'INACTIVE',
       links: [
         {
           rel: 'partner',
