@@ -89,7 +89,7 @@ const response = {
     ));
   },
   errorUserInput: (field = 'zip_code') => (res) => {
-    res.writeHead(404, { 'Content-type': 'application/json' });
+    res.writeHead(400, { 'Content-type': 'application/json' });
     res.end(JSON.stringify(
       {
         errors: [

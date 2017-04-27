@@ -226,7 +226,7 @@ const installationsMeters = (args, res) => {
   } else if (lowHandler) {
     lowHandler(res);
   } else {
-    response.succes(res);
+    response.success(res);
   }
 };
 
